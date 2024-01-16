@@ -14,8 +14,8 @@ namespace FinalCase.Data.Entity
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime LastActivityDate { get; set; }
-        public int GroupId { get; set; }
-        public virtual Group Group { get; set; }
+        public int RoleId { get; set; }
+        public virtual Role Role { get; set; }
         public int AccountId { get; set; }
         public virtual Account Account { get; set; }
         public int ContactId { get; set; }
