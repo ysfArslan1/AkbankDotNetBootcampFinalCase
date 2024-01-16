@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Data.Entity
 {
-    internal class User:BaseEntity
+    public class User:BaseEntity
     {
         public string IdentityNumber { get; set; }
         public string FirstName { get; set; }

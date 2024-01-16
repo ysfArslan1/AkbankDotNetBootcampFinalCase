@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Data.Entity
 {
-    internal class Group : BaseEntity
+    public class Role : BaseEntity
     {
         string Name { get; set; }
     }

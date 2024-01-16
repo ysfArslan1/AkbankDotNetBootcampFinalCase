@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Data.Entity
 {
-    internal class ExpencePayment
+    public class ExpencePayment
     {
         public int ExpenceRespondId { get; set; }
         public virtual ExpenceRespond ExpenceRespond { get; set; }

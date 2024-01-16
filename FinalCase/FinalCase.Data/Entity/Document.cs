@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Data.Entity
 {
-    internal class Document:BaseEntity
+    public class Document:BaseEntity
     {
         public int ExpenceNotifyId { get; set; }
         public virtual ExpenceNotify ExpenceNotify { get; set; }

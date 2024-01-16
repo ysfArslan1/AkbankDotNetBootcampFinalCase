@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Data.Entity
 {
-    internal class ExpenceType:BaseEntity
+    public class ExpenceType:BaseEntity
     {
         public string Name { get; set; }
         public string Description { get; set; }
