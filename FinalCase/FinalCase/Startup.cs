@@ -1,4 +1,8 @@
 ﻿
+using FinalCase.Data;
+using Microsoft.EntityFrameworkCore;
+using Vb.Data.DbContext;
+
 namespace FinalCase
 {
     public class Startup
@@ -11,7 +15,9 @@ namespace FinalCase
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add services to the container.
+            string connection = Configuration.GetConnectionString("MsSqlConnection");
+            services.AddDbContext<VbDbContext>(options => options.UseSqlServer(connection));
+            services.AddScoped<IVbDbContext>(provider => provider.GetService<VbDbContext>());
 
             services.AddControllers(); // httppatch için eklendi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
