@@ -1,4 +1,6 @@
 ﻿using FinalCase.Base.Entity;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +22,26 @@ namespace FinalCase.Data.Entity
         public virtual Account Account { get; set; }
         public int ContactId { get; set; }
         public virtual Contact Contact { get; set; }
+    }
+    public class UserConfiguration : IEntityTypeConfiguration<User>
+    {
+        public void Configure(EntityTypeBuilder<User> builder)
+        {
+            builder.Property(x => x.InsertDate).IsRequired(true);
+            builder.Property(x => x.InsertUserId).IsRequired(true);
+            builder.Property(x => x.UpdateDate).IsRequired(false);
+            builder.Property(x => x.UpdateUserId).IsRequired(false);
+            builder.Property(x => x.IsActive).IsRequired(true).HasDefaultValue(true);
+
+            builder.Property(x => x.IdentityNumber).IsRequired(true).HasMaxLength(11);
+            builder.Property(x => x.FirstName).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.LastName).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.DateOfBirth).IsRequired(true);
+            builder.Property(x => x.LastActivityDate).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.RoleId).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.AccountId).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.ContactId).IsRequired(true).HasMaxLength(200);
+
+        }
     }
 }

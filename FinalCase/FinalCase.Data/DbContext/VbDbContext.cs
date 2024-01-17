@@ -23,6 +23,15 @@ public class VbDbContext : DbContext, IVbDbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.ApplyConfiguration(new AccountConfiguration());
+        modelBuilder.ApplyConfiguration(new ContactConfiguration());
+        modelBuilder.ApplyConfiguration(new DocumentConfiguration());
+        modelBuilder.ApplyConfiguration(new ExpenceNotifyConfiguration());
+        modelBuilder.ApplyConfiguration(new ExpenceRespondConfiguration());
+        modelBuilder.ApplyConfiguration(new ExpenceTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
         base.OnModelCreating(modelBuilder);
     }
     
