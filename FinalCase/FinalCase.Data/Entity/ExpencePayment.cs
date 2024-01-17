@@ -38,6 +38,16 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.TransferType).IsRequired(true).HasMaxLength(3);
             builder.Property(x => x.IsDeposited).IsRequired(true);
 
+            builder.HasOne(e => e.Account)
+            .WithOne()
+            .HasForeignKey<ExpencePayment>(e => e.AccountId).IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(e => e.ExpenceRespond)
+            .WithOne()
+            .HasForeignKey<ExpencePayment>(e => e.ExpenceRespondId).IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
         }
     }
 }

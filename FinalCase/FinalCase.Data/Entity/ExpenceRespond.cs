@@ -33,6 +33,19 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.Explanation).IsRequired(true).HasMaxLength(200);
             builder.Property(x => x.isApproved).IsRequired(true);
 
+
+
+            builder.HasOne(e => e.User)
+            .WithOne()
+            .HasForeignKey<ExpenceRespond>(e => e.UserId).IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
+
+            builder.HasOne(e => e.ExpenceNotify)
+            .WithOne()
+            .HasForeignKey<ExpenceRespond>(e => e.ExpenceNotifyId).IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
         }
     }
 }

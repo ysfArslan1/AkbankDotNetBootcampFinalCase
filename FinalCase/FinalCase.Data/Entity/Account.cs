@@ -43,6 +43,10 @@ namespace FinalCase.Data.Entity
             builder.HasIndex(x => x.AccountNumber).IsUnique(true);
             builder.HasKey(x => x.AccountNumber);
 
+            builder.HasOne(a => a.User)
+            .WithOne()
+            .HasForeignKey<Account>(u => u.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

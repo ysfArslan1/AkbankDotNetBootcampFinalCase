@@ -18,9 +18,9 @@ namespace FinalCase.Data.Entity
         public decimal Amount{ get; set; }
         public string TransferType { get; set; }
 
-        public virtual ICollection<Document> Documents { get; set; }
         public int ExpenceTypeId { get; set; }
         public virtual ExpenceType ExpenceType { get; set; }
+        public virtual ICollection<Document> Documents { get; set; }
     }
     public class ExpenceNotifyConfiguration : IEntityTypeConfiguration<ExpenceNotify>
     {
@@ -40,8 +40,21 @@ namespace FinalCase.Data.Entity
 
             builder.HasMany(x => x.Documents)
                 .WithOne(x => x.ExpenceNotify)
-                .HasForeignKey(x => x.ExpenceNotifyId)
-                .IsRequired(true);
+                .HasForeignKey(x => x.Id)
+                .IsRequired(true)
+            .OnDelete(DeleteBehavior.NoAction);
+
+
+            builder.HasOne(e => e.User)
+            .WithOne()
+            .HasForeignKey<ExpenceNotify>(e => e.UserId).IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
+
+            builder.HasOne(e => e.ExpenceType)
+            .WithOne()
+            .HasForeignKey<ExpenceNotify>(e => e.ExpenceTypeId).IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
 
         }
     }

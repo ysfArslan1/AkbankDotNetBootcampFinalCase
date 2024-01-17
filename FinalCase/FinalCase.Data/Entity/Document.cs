@@ -31,6 +31,7 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.Description).IsRequired(true).HasMaxLength(200);
             builder.Property(x => x.Content).IsRequired(true);
 
+
         }
     }
 }

@@ -18,10 +18,6 @@ namespace FinalCase.Data.Entity
         public DateTime LastActivityDate { get; set; }
         public int RoleId { get; set; }
         public virtual Role Role { get; set; }
-        public int AccountId { get; set; }
-        public virtual Account Account { get; set; }
-        public int ContactId { get; set; }
-        public virtual Contact Contact { get; set; }
     }
     public class UserConfiguration : IEntityTypeConfiguration<User>
     {
@@ -39,8 +35,13 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.DateOfBirth).IsRequired(true);
             builder.Property(x => x.LastActivityDate).IsRequired(true).HasMaxLength(200);
             builder.Property(x => x.RoleId).IsRequired(true).HasMaxLength(200);
-            builder.Property(x => x.AccountId).IsRequired(true).HasMaxLength(200);
-            builder.Property(x => x.ContactId).IsRequired(true).HasMaxLength(200);
+
+            builder.HasIndex(x => x.IdentityNumber).IsUnique(true);
+
+            builder.HasOne(e => e.Role)
+            .WithOne()
+            .HasForeignKey<User>(e => e.RoleId).IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
 
         }
     }

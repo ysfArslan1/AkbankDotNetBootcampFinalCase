@@ -28,8 +28,13 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.IsActive).IsRequired(true).HasDefaultValue(true);
 
             builder.Property(x => x.UserId).IsRequired(true);
-            builder.Property(x => x.Email).IsRequired(true).HasMaxLength(10);
-            builder.Property(x => x.PhoneNumber).IsRequired(true).HasMaxLength(100);
+            builder.Property(x => x.Email).IsRequired(true).HasMaxLength(100);
+            builder.Property(x => x.PhoneNumber).IsRequired(true).HasMaxLength(11);
+
+            builder.HasOne(e => e.User)
+            .WithOne()
+            .HasForeignKey<Contact>(e => e.UserId).IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
 
         }
     }
