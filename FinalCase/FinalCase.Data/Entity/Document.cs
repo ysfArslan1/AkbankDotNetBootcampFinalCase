@@ -32,6 +32,7 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.Content).IsRequired(true);
 
 
+            builder.HasKey(x => x.Id);
         }
     }
 }

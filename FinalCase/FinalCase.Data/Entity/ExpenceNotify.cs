@@ -38,6 +38,8 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.TransferType).IsRequired(true).HasMaxLength(3);
             builder.Property(x => x.ExpenceTypeId).IsRequired(true);
 
+
+            builder.HasKey(x => x.Id);
             builder.HasMany(x => x.Documents)
                 .WithOne(x => x.ExpenceNotify)
                 .HasForeignKey(x => x.Id)

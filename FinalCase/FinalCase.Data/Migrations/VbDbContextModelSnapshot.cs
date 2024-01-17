@@ -24,6 +24,12 @@ namespace FinalCase.Data.Migrations
 
             modelBuilder.Entity("FinalCase.Data.Entity.Account", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AccountNumber")
                         .HasColumnType("int");
 
@@ -40,9 +46,6 @@ namespace FinalCase.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(34)
                         .HasColumnType("nvarchar(34)");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("InsertDate")
                         .HasColumnType("datetime2");
@@ -68,7 +71,7 @@ namespace FinalCase.Data.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("AccountNumber");
+                    b.HasKey("Id");
 
                     b.HasIndex("AccountNumber")
                         .IsUnique();

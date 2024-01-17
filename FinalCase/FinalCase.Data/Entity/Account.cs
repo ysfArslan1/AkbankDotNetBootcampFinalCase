@@ -41,7 +41,7 @@ namespace FinalCase.Data.Entity
 
             builder.HasIndex(x => x.UserId);
             builder.HasIndex(x => x.AccountNumber).IsUnique(true);
-            builder.HasKey(x => x.AccountNumber);
+            builder.HasKey(x=> x.Id);
 
             builder.HasOne(a => a.User)
             .WithOne()

@@ -38,6 +38,8 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.TransferType).IsRequired(true).HasMaxLength(3);
             builder.Property(x => x.IsDeposited).IsRequired(true);
 
+
+            builder.HasKey(x => x.Id);
             builder.HasOne(e => e.Account)
             .WithOne()
             .HasForeignKey<ExpencePayment>(e => e.AccountId).IsRequired()

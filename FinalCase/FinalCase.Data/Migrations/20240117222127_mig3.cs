@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FinalCase.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class mig2 : Migration
+    public partial class mig3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -80,13 +80,14 @@ namespace FinalCase.Data.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    AccountNumber = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
+                    AccountNumber = table.Column<int>(type: "int", nullable: false),
                     IBAN = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
                     CurrencyType = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Id = table.Column<int>(type: "int", nullable: false),
                     InsertUserId = table.Column<int>(type: "int", nullable: false),
                     InsertDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateUserId = table.Column<int>(type: "int", nullable: true),
@@ -95,7 +96,7 @@ namespace FinalCase.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Accounts", x => x.AccountNumber);
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Accounts_Users_UserId",
                         column: x => x.UserId,
@@ -240,7 +241,7 @@ namespace FinalCase.Data.Migrations
                         name: "FK_ExpencePayments_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "AccountNumber");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ExpencePayments_ExpenceResponds_ExpenceRespondId",
                         column: x => x.ExpenceRespondId,

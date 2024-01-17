@@ -38,6 +38,7 @@ namespace FinalCase.Data.Entity
 
             builder.HasIndex(x => x.IdentityNumber).IsUnique(true);
 
+            builder.HasKey(x => x.Id);
             builder.HasOne(e => e.Role)
             .WithOne()
             .HasForeignKey<User>(e => e.RoleId).IsRequired()

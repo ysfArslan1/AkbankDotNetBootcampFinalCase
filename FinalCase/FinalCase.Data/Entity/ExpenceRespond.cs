@@ -34,6 +34,7 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.isApproved).IsRequired(true);
 
 
+            builder.HasKey(x => x.Id);
 
             builder.HasOne(e => e.User)
             .WithOne()

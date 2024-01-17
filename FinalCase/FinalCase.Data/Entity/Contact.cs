@@ -31,6 +31,7 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.Email).IsRequired(true).HasMaxLength(100);
             builder.Property(x => x.PhoneNumber).IsRequired(true).HasMaxLength(11);
 
+            builder.HasKey(x => x.Id);
             builder.HasOne(e => e.User)
             .WithOne()
             .HasForeignKey<Contact>(e => e.UserId).IsRequired()
