@@ -12,8 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FinalCase.Base\FinalCase.Base.csproj" />
+    <ProjectReference Include="..\FinalCase.Business\FinalCase.Business.csproj" />
     <ProjectReference Include="..\FinalCase.Data\FinalCase.Data.csproj" />
+    <ProjectReference Include="..\FinalCase.Scheme\FinalCase.Scheme.csproj" />
   </ItemGroup>
 
 </Project>
