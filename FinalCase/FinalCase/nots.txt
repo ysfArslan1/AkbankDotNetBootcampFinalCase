@@ -1,0 +1,4 @@
+Projede veri tabanı olarak Microsoft SQL Server kullanıldı. Migration eklemek için kullanılan komut:
+    dotnet ef migrations add mig1 --project FinalCase.Data --startup-project FinalCase
+Eklenen Migration'ların uygulanması için kullanılan komut ise şu şekildedir:
+       dotnet ef database update --project "./FinalCase.Data" --startup-project "./FinalCase"

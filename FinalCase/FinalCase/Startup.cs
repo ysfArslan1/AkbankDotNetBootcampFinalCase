@@ -1,7 +1,11 @@
 ﻿
-using FinalCase.Data;
+using AutoMapper;
+using FinalCase.Business.Cqrs;
+using FinalCase.Business.Mapper;
+using FinalCase.Data.DbOperations;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using Vb.Data.DbContext;
+using System.Reflection;
 
 namespace FinalCase
 {
@@ -17,7 +21,17 @@ namespace FinalCase
         {
             string connection = Configuration.GetConnectionString("MsSqlConnection");
             services.AddDbContext<VbDbContext>(options => options.UseSqlServer(connection));
-            services.AddScoped<IVbDbContext>(provider => provider.GetService<VbDbContext>());
+
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateContactCommand).GetTypeInfo().Assembly));
+            
+            services.AddFluentValidation(conf =>
+            {
+                conf.RegisterValidatorsFromAssembly(typeof(Program).Assembly);
+                conf.AutomaticValidationEnabled = false;
+            });
+            
+            var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile(new MapperConfig()));
+            services.AddSingleton(mapperConfig.CreateMapper());
 
             services.AddControllers(); // httppatch için eklendi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

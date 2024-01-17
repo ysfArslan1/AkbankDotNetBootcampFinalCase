@@ -1,3 +1,4 @@
+﻿using FinalCase.Data.DbOperations;
 
 namespace FinalCase
 {
@@ -5,13 +6,23 @@ namespace FinalCase
     {
         public static void Main(string[] args)
         {
-            var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-           
+            var host = CreateHostBuilder(args).Build();
+            
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                DataGenerator.Initialize(services);
+            }
+            host.Run();
+
+
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                }).Build().Run();
-        }
-}
+                });
+    }
 }
