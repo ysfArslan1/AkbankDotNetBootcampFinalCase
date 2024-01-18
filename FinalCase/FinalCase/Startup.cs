@@ -3,6 +3,8 @@ using AutoMapper;
 using FinalCase.Business.Cqrs;
 using FinalCase.Business.Mapper;
 using FinalCase.Data.DbOperations;
+using FinalCase.Middlewares;
+using FinalCase.Services;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -33,6 +35,9 @@ namespace FinalCase
             var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile(new MapperConfig()));
             services.AddSingleton(mapperConfig.CreateMapper());
 
+
+            services.AddSingleton<ILoggerService, ConsoleLogger>();
+
             services.AddControllers(); // httppatch için eklendi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
@@ -53,6 +58,9 @@ namespace FinalCase
             app.UseRouting();
             app.UseAuthorization();
 
+
+            //middlewaare
+            app.UseCustomExceptionMiddleware();
 
             app.UseEndpoints(x => { x.MapControllers(); });
         }
