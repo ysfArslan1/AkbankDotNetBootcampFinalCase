@@ -10,8 +10,8 @@ public class UserRequest : BaseRequest
     public string IdentityNumber { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string daDateOfBirtht { get; set; }
-    public string LastActivityDate { get; set; }
+    public DateTime daDateOfBirtht { get; set; }
+    public DateTime LastActivityDate { get; set; }
     public int RoleId { get; set; }
 }
 

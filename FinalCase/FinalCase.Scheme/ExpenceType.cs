@@ -7,13 +7,13 @@ namespace FinalCase.Schema;
 public class ExpenceTypeRequest : BaseRequest
 {
     
-    public int Name { get; set; }
+    public string Name { get; set; }
     public string Description { get; set; }
 }
 
 // ExpenceType sýnýfý için response gönderilmekte kullanýlýr.
 public class ExpenceTypeResponse : BaseResponse
 {
-    public int Name { get; set; }
+    public string Name { get; set; }
     public string Description { get; set; }
 }
