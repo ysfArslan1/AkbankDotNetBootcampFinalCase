@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Business.Validator
 {
+    // ContactRequest sınıfının validasyonunun yapıldığı Validator
     public class ContactRequestValidator : AbstractValidator<ContactRequest>
     {
         public ContactRequestValidator()

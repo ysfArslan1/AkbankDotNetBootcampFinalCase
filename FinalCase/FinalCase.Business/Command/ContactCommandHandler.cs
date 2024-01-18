@@ -24,6 +24,7 @@ public class ContactCommandHandler :
         this.mapper = mapper;
     }
 
+    // Contact sýnýfýnýn database de oluþturulmasý için kullanýlan command
     public async Task<ApiResponse<ContactResponse>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
         var checkEmail= await dbContext.Set<Contact>().Where(x => x.Email == request.Model.Email )
@@ -48,10 +49,12 @@ public class ContactCommandHandler :
         return new ApiResponse<ContactResponse>(mapped);
     }
 
+    // Contact sýnýfýnýn database de güncellenmesi için kullanýlan command
     public async Task<ApiResponse> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
     {
         var fromdb = await dbContext.Set<Contact>().Where(x => x.Id == request.Id)
             .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
         if (fromdb == null)
         {
             return new ApiResponse("Record not found");
@@ -65,17 +68,18 @@ public class ContactCommandHandler :
         return new ApiResponse();
     }
 
+    // Contact sýnýfýnýn database de softdelete ile silinmesini için kullanýlan command
     public async Task<ApiResponse> Handle(DeleteContactCommand request, CancellationToken cancellationToken)
     {
         var fromdb = await dbContext.Set<Contact>().Where(x => x.Id == request.Id)
             .FirstOrDefaultAsync(cancellationToken);
-        
+        // deðerin kontrol edilmesi
         if (fromdb == null)
         {
             return new ApiResponse("Record not found");
         }
-        //dbContext.Set<Contact>().Remove(fromdb);
-        
+
+        // soft delete iþlemi yapýlýr
         fromdb.IsActive = false;
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();

@@ -1,8 +1,10 @@
 using FinalCase.Base.Response;
 using FinalCase.Business.Cqrs;
+using FinalCase.Business.Validator;
 using FinalCase.Data;
 using FinalCase.Data.Entity;
 using FinalCase.Schema;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +29,7 @@ public class ContactsController : ControllerBase
         return result;
     }
 
+    // Database bulunan Contact verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
     public async Task<ApiResponse<ContactResponse>> Get(int id)
     {
@@ -35,25 +38,33 @@ public class ContactsController : ControllerBase
         return result;
     }
 
-    
-
+    // Database de Contact verisi oluþturmak için kullanýlýr.
     [HttpPost]
-    [Authorize(Roles = "admin")]
     public async Task<ApiResponse<ContactResponse>> Post([FromBody] ContactRequest Contact)
     {
+        // Validation iþlemi uygulanýr
+        ContactRequestValidator validator = new ContactRequestValidator();
+        validator.ValidateAndThrow(Contact);
+
         var operation = new CreateContactCommand(Contact);
         var result = await mediator.Send(operation);
         return result;
     }
 
+    // Database den id degeri verilen Contact verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
     public async Task<ApiResponse> Put(int id, [FromBody] ContactRequest Contact)
     {
+        // Validation iþlemi uygulanýr
+        ContactRequestValidator validator = new ContactRequestValidator();
+        validator.ValidateAndThrow(Contact);
+
         var operation = new UpdateContactCommand(id, Contact);
         var result = await mediator.Send(operation);
         return result;
     }
 
+    // Database den id degeri verilen Contact verisi softdelete yapýlýr
     [HttpDelete("{id}")]
     public async Task<ApiResponse> Delete(int id)
     {
