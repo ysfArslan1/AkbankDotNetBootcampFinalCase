@@ -18,7 +18,7 @@ public class ExpenceNotifyRequest : BaseRequest
 public class ExpenceNotifyResponse : BaseResponse
 {
     public string UserName { get; set; }
-    public int ExpenceTypeId { get; set; }
+    public string ExpenceType { get; set; }
     public string Explanation { get; set; }
     public decimal Amount { get; set; }
     public string TransferType { get; set; }

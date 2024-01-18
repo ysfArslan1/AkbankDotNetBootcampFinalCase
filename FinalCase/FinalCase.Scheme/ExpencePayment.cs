@@ -20,6 +20,7 @@ public class ExpencePaymentResponse : BaseResponse
 {
     public int ExpenceRespondId { get; set; }
     public int AccountId { get; set; }
+    public string AccountName { get; set; }
     public string Description { get; set; }
     public string TransferType { get; set; }
     public DateTime TransactionDate { get; set; }
