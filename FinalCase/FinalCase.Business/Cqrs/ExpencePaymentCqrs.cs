@@ -5,8 +5,8 @@ using FinalCase.Schema;
 namespace FinalCase.Business.Cqrs;
 
 
-public record CreateExpencePaymentCommand(ExpencePaymentRequest Model) : IRequest<ApiResponse<ExpencePaymentResponse>>;
-public record UpdateExpencePaymentCommand(int Id,ExpencePaymentRequest Model) : IRequest<ApiResponse>;
+public record CreateExpencePaymentCommand(CreateExpencePaymentRequest Model) : IRequest<ApiResponse<ExpencePaymentResponse>>;
+public record UpdateExpencePaymentCommand(int Id, UpdateExpencePaymentRequest Model) : IRequest<ApiResponse>;
 public record DeleteExpencePaymentCommand(int Id) : IRequest<ApiResponse>;
 
 public record GetAllExpencePaymentQuery() : IRequest<ApiResponse<List<ExpencePaymentResponse>>>;

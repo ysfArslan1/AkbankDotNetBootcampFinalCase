@@ -17,7 +17,7 @@ namespace FinalCase.Business.Validator
             RuleFor(x => x.IdentityNumber).NotNull().NotEmpty().Length(11);
             RuleFor(x => x.FirstName).NotNull().NotEmpty().MaximumLength(100);
             RuleFor(x => x.LastName).NotNull().NotEmpty().MaximumLength(100);
-            RuleFor(x => x.daDateOfBirtht).NotNull().NotEmpty().LessThan(DateTime.Now);
+            RuleFor(x => x.DateOfBirtht).NotNull().NotEmpty().LessThan(DateTime.Now);
             RuleFor(x => x.LastActivityDate).NotNull().NotEmpty().LessThan(DateTime.Now);
             RuleFor(x => x.RoleId).NotNull().NotEmpty().GreaterThan(0);
         }
@@ -29,7 +29,7 @@ namespace FinalCase.Business.Validator
         {
             RuleFor(x => x.FirstName).NotNull().NotEmpty().MaximumLength(100);
             RuleFor(x => x.LastName).NotNull().NotEmpty().MaximumLength(100);
-            RuleFor(x => x.daDateOfBirtht).NotNull().NotEmpty().LessThan(DateTime.Now);
+            RuleFor(x => x.DateOfBirtht).NotNull().NotEmpty().LessThan(DateTime.Now);
             RuleFor(x => x.RoleId).NotNull().NotEmpty().GreaterThan(0);
         }
     }

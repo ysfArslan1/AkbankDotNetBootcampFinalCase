@@ -10,7 +10,7 @@ public class CreateUserRequest : BaseRequest
     public string IdentityNumber { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public DateTime daDateOfBirtht { get; set; }
+    public DateTime DateOfBirtht { get; set; }
     public DateTime LastActivityDate { get; set; }
     public int RoleId { get; set; }
 }
@@ -20,7 +20,7 @@ public class UpdateUserRequest : BaseRequest
 
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public DateTime daDateOfBirtht { get; set; }
+    public DateTime DateOfBirtht { get; set; }
     public int RoleId { get; set; }
 }
 

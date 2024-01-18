@@ -40,10 +40,10 @@ public class ContactsController : ControllerBase
 
     // Database de Contact verisi oluþturmak için kullanýlýr.
     [HttpPost]
-    public async Task<ApiResponse<ContactResponse>> Post([FromBody] ContactRequest Contact)
+    public async Task<ApiResponse<ContactResponse>> Post([FromBody] CreateContactRequest Contact)
     {
         // Validation iþlemi uygulanýr
-        ContactRequestValidator validator = new ContactRequestValidator();
+        CreateContactRequestValidator validator = new CreateContactRequestValidator();
         validator.ValidateAndThrow(Contact);
 
         var operation = new CreateContactCommand(Contact);
@@ -53,10 +53,10 @@ public class ContactsController : ControllerBase
 
     // Database den id degeri verilen Contact verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
-    public async Task<ApiResponse> Put(int id, [FromBody] ContactRequest Contact)
+    public async Task<ApiResponse> Put(int id, [FromBody] UpdateContactRequest Contact)
     {
         // Validation iþlemi uygulanýr
-        ContactRequestValidator validator = new ContactRequestValidator();
+        UpdateContactRequestValidator validator = new UpdateContactRequestValidator();
         validator.ValidateAndThrow(Contact);
 
         var operation = new UpdateContactCommand(id, Contact);

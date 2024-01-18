@@ -5,8 +5,8 @@ using FinalCase.Schema;
 namespace FinalCase.Business.Cqrs;
 
 
-public record CreateUserCommand(UserRequest Model) : IRequest<ApiResponse<UserResponse>>;
-public record UpdateUserCommand(int Id,UserRequest Model) : IRequest<ApiResponse>;
+public record CreateUserCommand(CreateUserRequest Model) : IRequest<ApiResponse<UserResponse>>;
+public record UpdateUserCommand(int Id, UpdateUserRequest Model) : IRequest<ApiResponse>;
 public record DeleteUserCommand(int Id) : IRequest<ApiResponse>;
 
 public record GetAllUserQuery() : IRequest<ApiResponse<List<UserResponse>>>;

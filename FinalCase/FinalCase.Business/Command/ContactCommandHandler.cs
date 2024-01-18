@@ -40,7 +40,7 @@ public class ContactCommandHandler :
             return new ApiResponse<ContactResponse>($"{request.Model.PhoneNumber} is used by another Contact.");
         }
 
-        var entity = mapper.Map<ContactRequest, Contact>(request.Model);
+        var entity = mapper.Map<CreateContactRequest, Contact>(request.Model);
         
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -60,7 +60,6 @@ public class ContactCommandHandler :
             return new ApiResponse("Record not found");
         }
         
-        fromdb.UserId = request.Model.UserId;
         fromdb.Email = request.Model.Email;
         fromdb.PhoneNumber = request.Model.PhoneNumber;
         

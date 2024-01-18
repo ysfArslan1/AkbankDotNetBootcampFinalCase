@@ -1,0 +1,77 @@
+using AutoMapper;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using FinalCase.Base.Response;
+using FinalCase.Business.Cqrs;
+using FinalCase.Data.Entity;
+using FinalCase.Schema;
+using FinalCase.Data.DbOperations;
+
+namespace FinalCase.Business.Command;
+
+public class ExpenceNotifyCommandHandler :
+    IRequestHandler<CreateExpenceNotifyCommand, ApiResponse<ExpenceNotifyResponse>>,
+    IRequestHandler<UpdateExpenceNotifyCommand,ApiResponse>,
+    IRequestHandler<DeleteExpenceNotifyCommand,ApiResponse>
+
+{
+    private readonly VbDbContext dbContext;
+    private readonly IMapper mapper;
+
+    public ExpenceNotifyCommandHandler(VbDbContext dbContext,IMapper mapper)
+    {
+        this.dbContext = dbContext;
+        this.mapper = mapper;
+    }
+
+    // ExpenceNotify sýnýfýnýn database de oluþturulmasý için kullanýlan command
+    public async Task<ApiResponse<ExpenceNotifyResponse>> Handle(CreateExpenceNotifyCommand request, CancellationToken cancellationToken)
+    {
+        
+
+        var entity = mapper.Map<CreateExpenceNotifyRequest, ExpenceNotify>(request.Model);
+        
+        var entityResult = await dbContext.AddAsync(entity, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var mapped = mapper.Map<ExpenceNotify, ExpenceNotifyResponse>(entityResult.Entity);
+        return new ApiResponse<ExpenceNotifyResponse>(mapped);
+    }
+
+    // ExpenceNotify sýnýfýnýn database de güncellenmesi için kullanýlan command
+    public async Task<ApiResponse> Handle(UpdateExpenceNotifyCommand request, CancellationToken cancellationToken)
+    {
+        var fromdb = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
+        if (fromdb == null)
+        {
+            return new ApiResponse("Record not found");
+        }
+        
+        fromdb.ExpenceTypeId = request.Model.ExpenceTypeId;
+        fromdb.Explanation = request.Model.Explanation;
+        fromdb.Amount = request.Model.Amount;
+        fromdb.TransferType = request.Model.TransferType;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return new ApiResponse();
+    }
+
+    // ExpenceNotify sýnýfýnýn database de softdelete ile silinmesini için kullanýlan command
+    public async Task<ApiResponse> Handle(DeleteExpenceNotifyCommand request, CancellationToken cancellationToken)
+    {
+        var fromdb = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
+        if (fromdb == null)
+        {
+            return new ApiResponse("Record not found");
+        }
+
+        // soft delete iþlemi yapýlýr
+        fromdb.IsActive = false;
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return new ApiResponse();
+    }
+}
