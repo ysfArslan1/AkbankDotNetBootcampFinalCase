@@ -9,13 +9,22 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Business.Validator
 {
-    // ExpenceRespondRequest sınıfının validasyonunun yapıldığı Validator
-    public class ExpenceRespondRequestValidator : AbstractValidator<ExpenceRespondRequest>
+    // CreateExpenceRespondRequest sınıfının validasyonunun yapıldığı Validator
+    public class CreateExpenceRespondRequestValidator : AbstractValidator<CreateExpenceRespondRequest>
     {
-        public ExpenceRespondRequestValidator()
+        public CreateExpenceRespondRequestValidator()
         {
             RuleFor(x => x.UserId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.ExpenceNotifyId).NotNull().NotEmpty().GreaterThan(0);
+            RuleFor(x => x.isApproved).NotNull();
+            RuleFor(x => x.Explanation).NotNull().NotEmpty().MaximumLength(100);
+        }
+    }
+    // UpdateExpenceRespondRequest sınıfının validasyonunun yapıldığı Validator
+    public class UpdateExpenceRespondRequestValidator : AbstractValidator<UpdateExpenceRespondRequest>
+    {
+        public UpdateExpenceRespondRequestValidator()
+        {
             RuleFor(x => x.isApproved).NotNull();
             RuleFor(x => x.Explanation).NotNull().NotEmpty().MaximumLength(100);
         }

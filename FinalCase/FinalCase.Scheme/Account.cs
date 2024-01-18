@@ -3,13 +3,19 @@ using System.Text.Json.Serialization;
 
 namespace FinalCase.Schema;
 
-// Account sýnýfý için gelen requestleri almakta kullanýlýr.
-public class AccountRequest : BaseRequest
+// Account sýnýfý için gelen create requestleri almakta kullanýlýr.
+public class CreateAccountRequest : BaseRequest
 {
     
     public int UserId { get; set; }
     public decimal Balance { get; set; }
     public string CurrencyType { get; set; }
+    public string Name { get; set; }
+}
+// Account sýnýfý için gelen update requestleri almakta kullanýlýr.
+public class UpdateAccountRequest : BaseRequest
+{
+    public decimal Balance { get; set; }
     public string Name { get; set; }
 }
 

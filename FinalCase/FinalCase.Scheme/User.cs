@@ -3,8 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace FinalCase.Schema;
 
-// User sýnýfý için gelen requestleri almakta kullanýlýr.
-public class UserRequest : BaseRequest
+// User sýnýfý için gelen create requestlerini almakta kullanýlýr.
+public class CreateUserRequest : BaseRequest
 {
 
     public string IdentityNumber { get; set; }
@@ -12,6 +12,15 @@ public class UserRequest : BaseRequest
     public string LastName { get; set; }
     public DateTime daDateOfBirtht { get; set; }
     public DateTime LastActivityDate { get; set; }
+    public int RoleId { get; set; }
+}
+// User sýnýfý için gelen update requestlerini almakta kullanýlýr.
+public class UpdateUserRequest : BaseRequest
+{
+
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public DateTime daDateOfBirtht { get; set; }
     public int RoleId { get; set; }
 }
 

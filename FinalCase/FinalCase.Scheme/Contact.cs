@@ -3,13 +3,18 @@ using System.Text.Json.Serialization;
 
 namespace FinalCase.Schema;
 
-// Contact sýnýfý için gelen requestleri almakta kullanýlýr.
-public class ContactRequest : BaseRequest
+// Contact sýnýfý için gelen create requestlerini almakta kullanýlýr.
+public class CreateContactRequest : BaseRequest
 {
-    [JsonIgnore]
-    public int Id { get; set; }
     
     public int UserId { get; set; }
+    public string Email { get; set; }
+    public string PhoneNumber { get; set; }
+}
+// Contact sýnýfý için gelen update requestlerini almakta kullanýlýr.
+public class UpdateContactRequest : BaseRequest
+{
+
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
 }
@@ -17,8 +22,6 @@ public class ContactRequest : BaseRequest
 // Contact sýnýfý için response gönderilmekte kullanýlýr.
 public class ContactResponse : BaseResponse
 {
-    [JsonIgnore]
-    public int Id { get; set; }
     public int UserId { get; set; }
     public string UserName { get; set; }
     public string Email { get; set; }

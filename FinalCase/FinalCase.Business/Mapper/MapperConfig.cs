@@ -9,7 +9,7 @@ public class MapperConfig : Profile
     public MapperConfig()
     {
 
-        CreateMap<ContactRequest, Contact>();
+        CreateMap<CreateContactRequest, Contact>();
         CreateMap<Contact, ContactResponse>()
             .ForMember(dest => dest.UserName,
                 src => src.MapFrom(x => x.User.FirstName + " " + x.User.LastName));
