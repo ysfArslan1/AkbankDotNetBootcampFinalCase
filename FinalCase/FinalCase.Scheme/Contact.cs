@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace FinalCase.Schema;
 
+// Contact sýnýfý için gelen requestleri almakta kullanýlýr.
 public class ContactRequest : BaseRequest
 {
     [JsonIgnore]
@@ -13,7 +14,7 @@ public class ContactRequest : BaseRequest
     public string PhoneNumber { get; set; }
 }
 
-
+// Contact sýnýfý için response gönderilmekte kullanýlýr.
 public class ContactResponse : BaseResponse
 {
     [JsonIgnore]
