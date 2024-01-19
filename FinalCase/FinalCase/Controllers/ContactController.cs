@@ -13,10 +13,10 @@ namespace FinalCase.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ContactsController : ControllerBase
+public class ContactController : ControllerBase
 {
     private readonly IMediator mediator;
-    public ContactsController(IMediator _mediator)
+    public ContactController(IMediator _mediator)
     {
         mediator = _mediator;
     }
