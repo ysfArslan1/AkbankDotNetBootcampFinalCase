@@ -30,7 +30,7 @@ public class UserResponse : BaseResponse
     public string IdentityNumber { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string daDateOfBirtht { get; set; }
+    public string DateOfBirtht { get; set; }
     public string LastActivityDate { get; set; }
     public string Role { get; set; }
 }
