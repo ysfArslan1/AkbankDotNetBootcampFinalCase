@@ -53,7 +53,14 @@ public class RoleCommandHandler :
         {
             return new ApiResponse("Record not found");
         }
-        
+
+        var check = await dbContext.Set<Role>().Where(x => x.Name == request.Model.Name)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check != null)
+        {
+            return new ApiResponse($"{request.Model.Name} is used by another Role.");
+        }
+
         fromdb.Name = request.Model.Name;
         
         await dbContext.SaveChangesAsync(cancellationToken);

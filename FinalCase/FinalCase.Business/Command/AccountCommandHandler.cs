@@ -33,10 +33,19 @@ public class AccountCommandHandler :
         {
             return new ApiResponse<AccountResponse>($"{request.Model.Name} is used by another Account.");
         }
-        
+        var checkUser = await dbContext.Set<User>().Where(x => x.Id == request.Model.UserId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkUser == null)
+        {
+            return new ApiResponse<AccountResponse>("User not found");
+        }
 
         var entity = mapper.Map<CreateAccountRequest, Account>(request.Model);
-        
+
+        // Iban ve Account numarasý oluþtur
+        entity.AccountNumber =await generateAccountNumber();
+        entity.IBAN =await generateIBAN();
+
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -54,7 +63,14 @@ public class AccountCommandHandler :
         {
             return new ApiResponse("Record not found");
         }
-        
+        // Kullanýcýnýn ayný isimde baþka hesabý olup olmadýðý kontrol edilir.
+        var check = await dbContext.Set<Account>().Where(x => x.UserId == fromdb.UserId && x.Name == request.Model.Name)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check != null)
+        {
+            return new ApiResponse($"{request.Model.Name} is used by another Account.");
+        }
+
         fromdb.Name = request.Model.Name;
         fromdb.Balance = request.Model.Balance;
         
@@ -77,5 +93,30 @@ public class AccountCommandHandler :
         fromdb.IsActive = false;
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
+    }
+
+    public async Task<int> generateAccountNumber()
+    {
+        int AccountNumber = new Random().Next(1000000, 9999999);
+        var checkAccount = await dbContext.Accounts.Where(x => x.AccountNumber == AccountNumber).FirstOrDefaultAsync();
+
+        if (checkAccount != null)
+        {
+            AccountNumber = new Random().Next(1000000, 9999999);
+            checkAccount = await dbContext.Accounts.Where(x => x.AccountNumber == AccountNumber).FirstOrDefaultAsync();
+        }
+        return AccountNumber;
+    }
+    public async Task<string> generateIBAN()
+    {
+        string IBAN = new Random().Next(1000000, 9999999).ToString();
+        var checkIBAN = await dbContext.Accounts.Where(x => x.IBAN == IBAN).FirstOrDefaultAsync();
+
+        if (checkIBAN != null)
+        {
+            IBAN = new Random().Next(1000000, 9999999).ToString();
+            checkIBAN = await dbContext.Accounts.Where(x => x.IBAN == IBAN).FirstOrDefaultAsync();
+        }
+        return IBAN;
     }
 }

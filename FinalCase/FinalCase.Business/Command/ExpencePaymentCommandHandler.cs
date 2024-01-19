@@ -33,7 +33,21 @@ public class ExpencePaymentCommandHandler :
         {
             return new ApiResponse<ExpencePaymentResponse>($"{request.Model.ExpenceRespondId} is used by another ExpencePayment.");
         }
-        
+
+        var checkRespond = await dbContext.Set<ExpenceRespond>().Where(x => x.Id == request.Model.ExpenceRespondId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkRespond == null)
+        {
+            return new ApiResponse<ExpencePaymentResponse>("ExpenceRespond not found");
+        }
+
+        var checkAccount = await dbContext.Set<Account>().Where(x => x.Id == request.Model.AccountId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkAccount == null)
+        {
+            return new ApiResponse<ExpencePaymentResponse>("Account not found");
+        }
+
 
         var entity = mapper.Map<CreateExpencePaymentRequest, ExpencePayment>(request.Model);
         

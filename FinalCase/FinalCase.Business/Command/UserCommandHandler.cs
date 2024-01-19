@@ -33,6 +33,13 @@ public class UserCommandHandler :
         {
             return new ApiResponse<UserResponse>($"{request.Model.IdentityNumber} is used by another User.");
         }
+        var checkRole = await dbContext.Set<Role>().Where(x => x.Id == request.Model.RoleId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkRole == null)
+        {
+            return new ApiResponse<UserResponse>("Role not found");
+        }
+
 
         var entity = mapper.Map<CreateUserRequest, User>(request.Model);
         
@@ -53,7 +60,14 @@ public class UserCommandHandler :
         {
             return new ApiResponse("Record not found");
         }
-        
+
+        var checkRole = await dbContext.Set<Role>().Where(x => x.Id == request.Model.RoleId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkRole == null)
+        {
+            return new ApiResponse("Role not found");
+        }
+
         fromdb.FirstName = request.Model.FirstName;
         fromdb.LastName = request.Model.LastName;
         fromdb.DateOfBirth = request.Model.DateOfBirtht;

@@ -33,7 +33,21 @@ public class ExpenceRespondCommandHandler :
         {
             return new ApiResponse<ExpenceRespondResponse>($"{request.Model.ExpenceNotifyId} is used by another ExpenceRespond.");
         }
-        
+
+        var checkNotify = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == request.Model.ExpenceNotifyId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkNotify == null)
+        {
+            return new ApiResponse<ExpenceRespondResponse>("ExpenceNotify not found");
+        }
+
+        var checkUser = await dbContext.Set<User>().Where(x => x.Id == request.Model.UserId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkUser == null)
+        {
+            return new ApiResponse<ExpenceRespondResponse>("User not found");
+        }
+
         var entity = mapper.Map<CreateExpenceRespondRequest, ExpenceRespond>(request.Model);
         
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);

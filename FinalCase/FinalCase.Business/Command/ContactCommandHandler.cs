@@ -27,6 +27,12 @@ public class ContactCommandHandler :
     // Contact sýnýfýnýn database de oluþturulmasý için kullanýlan command
     public async Task<ApiResponse<ContactResponse>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
+        var check = await dbContext.Set<User>().Where(x => x.Id == request.Model.UserId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check == null)
+        {
+            return new ApiResponse<ContactResponse>("User not found");
+        }
         var checkEmail= await dbContext.Set<Contact>().Where(x => x.Email == request.Model.Email )
             .FirstOrDefaultAsync(cancellationToken);
         if (checkEmail != null)
@@ -59,7 +65,20 @@ public class ContactCommandHandler :
         {
             return new ApiResponse("Record not found");
         }
-        
+
+        var checkEmail = await dbContext.Set<Contact>().Where(x => x.Email == request.Model.Email)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkEmail != null)
+        {
+            return new ApiResponse($"{request.Model.Email} is used by another Contact.");
+        }
+        var checkPhone = await dbContext.Set<Contact>().Where(x => x.PhoneNumber == request.Model.PhoneNumber)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkPhone != null)
+        {
+            return new ApiResponse($"{request.Model.PhoneNumber} is used by another Contact.");
+        }
+
         fromdb.Email = request.Model.Email;
         fromdb.PhoneNumber = request.Model.PhoneNumber;
         

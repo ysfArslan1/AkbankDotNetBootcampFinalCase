@@ -27,7 +27,19 @@ public class ExpenceNotifyCommandHandler :
     // ExpenceNotify sýnýfýnýn database de oluþturulmasý için kullanýlan command
     public async Task<ApiResponse<ExpenceNotifyResponse>> Handle(CreateExpenceNotifyCommand request, CancellationToken cancellationToken)
     {
-        
+        var checkUser = await dbContext.Set<User>().Where(x => x.Id == request.Model.UserId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkUser == null)
+        {
+            return new ApiResponse<ExpenceNotifyResponse>("User not found");
+        }
+
+        var check = await dbContext.Set<ExpenceType>().Where(x => x.Id == request.Model.ExpenceTypeId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check == null)
+        {
+            return new ApiResponse<ExpenceNotifyResponse>("ExpenceType not found");
+        }
 
         var entity = mapper.Map<CreateExpenceNotifyRequest, ExpenceNotify>(request.Model);
         
@@ -48,7 +60,14 @@ public class ExpenceNotifyCommandHandler :
         {
             return new ApiResponse("Record not found");
         }
-        
+
+        var check = await dbContext.Set<ExpenceType>().Where(x => x.Id == request.Model.ExpenceTypeId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check == null)
+        {
+            return new ApiResponse("ExpenceType not found");
+        }
+
         fromdb.ExpenceTypeId = request.Model.ExpenceTypeId;
         fromdb.Explanation = request.Model.Explanation;
         fromdb.Amount = request.Model.Amount;

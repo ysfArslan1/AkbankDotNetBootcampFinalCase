@@ -52,7 +52,14 @@ public class ExpenceTypeCommandHandler :
         {
             return new ApiResponse("Record not found");
         }
-        
+
+        var check = await dbContext.Set<ExpenceType>().Where(x => x.Name == request.Model.Name)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check != null)
+        {
+            return new ApiResponse($"{request.Model.Name} is used by another ExpenceType.");
+        }
+
         fromdb.Name = request.Model.Name;
         fromdb.Description = request.Model.Description;
         

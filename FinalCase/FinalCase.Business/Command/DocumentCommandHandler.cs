@@ -27,7 +27,13 @@ public class DocumentCommandHandler :
     // Document sýnýfýnýn database de oluþturulmasý için kullanýlan command
     public async Task<ApiResponse<DocumentResponse>> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
     {
-        
+        var check = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == request.Model.ExpenceNotifyId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check == null)
+        {
+            return new ApiResponse<DocumentResponse>("ExpenceNotify not found");
+        }
+
         var entity = mapper.Map<CreateDocumentRequest, Document>(request.Model);
         
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
