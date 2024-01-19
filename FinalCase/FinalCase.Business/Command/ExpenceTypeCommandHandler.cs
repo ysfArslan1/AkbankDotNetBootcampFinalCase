@@ -33,7 +33,7 @@ public class ExpenceTypeCommandHandler :
         {
             return new ApiResponse<ExpenceTypeResponse>($"{request.Model.Name} is used by another ExpenceType.");
         }
-        var entity = mapper.Map<ExpenceTypeRequest, ExpenceType>(request.Model);
+        var entity = mapper.Map<CreateExpenceTypeRequest, ExpenceType>(request.Model);
         
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);

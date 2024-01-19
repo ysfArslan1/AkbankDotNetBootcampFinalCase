@@ -46,6 +46,12 @@ public class MapperConfig : Profile
                 src => src.MapFrom(x => x.Role.Name));
 
 
+        CreateMap<CreateExpenceTypeRequest, ExpenceType>();
+        CreateMap<ExpenceType, ExpenceTypeResponse>();
+
+
+        CreateMap<CreateRoleRequest, Role>();
+        CreateMap<Role, RoleResponse>();
 
     }
 }

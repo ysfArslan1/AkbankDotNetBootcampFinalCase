@@ -5,8 +5,8 @@ using FinalCase.Schema;
 namespace FinalCase.Business.Cqrs;
 
 
-public record CreateExpenceTypeCommand(ExpenceTypeRequest Model) : IRequest<ApiResponse<ExpenceTypeResponse>>;
-public record UpdateExpenceTypeCommand(int Id,ExpenceTypeRequest Model) : IRequest<ApiResponse>;
+public record CreateExpenceTypeCommand(CreateExpenceTypeRequest Model) : IRequest<ApiResponse<ExpenceTypeResponse>>;
+public record UpdateExpenceTypeCommand(int Id,UpdateExpenceTypeRequest Model) : IRequest<ApiResponse>;
 public record DeleteExpenceTypeCommand(int Id) : IRequest<ApiResponse>;
 
 public record GetAllExpenceTypeQuery() : IRequest<ApiResponse<List<ExpenceTypeResponse>>>;

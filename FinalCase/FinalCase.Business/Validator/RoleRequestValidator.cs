@@ -9,10 +9,19 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Business.Validator
 {
-    // RoleRequest sınıfının validasyonunun yapıldığı Validator
-    public class RoleRequestValidator : AbstractValidator<RoleRequest>
+    // CreateRoleRequest sınıfının validasyonunun yapıldığı Validator
+    public class CreateRoleRequestValidator : AbstractValidator<CreateRoleRequest>
     {
-        public RoleRequestValidator()
+        public CreateRoleRequestValidator()
+        {
+            RuleFor(x => x.Name).NotNull().NotEmpty().MaximumLength(100);
+        }
+    }
+
+    // UpdateRoleRequest sınıfının validasyonunun yapıldığı Validator
+    public class UpdateRoleRequestValidator : AbstractValidator<UpdateRoleRequest>
+    {
+        public UpdateRoleRequestValidator()
         {
             RuleFor(x => x.Name).NotNull().NotEmpty().MaximumLength(100);
         }

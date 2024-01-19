@@ -9,10 +9,20 @@ using System.Threading.Tasks;
 
 namespace FinalCase.Business.Validator
 {
-    // ExpenceTypeRequest sınıfının validasyonunun yapıldığı Validator
-    public class ExpenceTypeRequestValidator : AbstractValidator<ExpenceTypeRequest>
+    // CreateExpenceTypeRequest sınıfının validasyonunun yapıldığı Validator
+    public class CreateExpenceTypeRequestValidator : AbstractValidator<CreateExpenceTypeRequest>
     {
-        public ExpenceTypeRequestValidator()
+        public CreateExpenceTypeRequestValidator()
+        {
+            RuleFor(x => x.Name).NotNull().NotEmpty().MaximumLength(100);
+            RuleFor(x => x.Description).NotNull().NotEmpty().MaximumLength(250);
+        }
+    }
+
+    // UpdateExpenceTypeRequest sınıfının validasyonunun yapıldığı Validator
+    public class UpdateExpenceTypeRequestValidator : AbstractValidator<UpdateExpenceTypeRequest>
+    {
+        public UpdateExpenceTypeRequestValidator()
         {
             RuleFor(x => x.Name).NotNull().NotEmpty().MaximumLength(100);
             RuleFor(x => x.Description).NotNull().NotEmpty().MaximumLength(250);

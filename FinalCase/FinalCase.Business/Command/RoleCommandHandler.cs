@@ -34,7 +34,7 @@ public class RoleCommandHandler :
             return new ApiResponse<RoleResponse>($"{request.Model.Name} is used by another Role.");
         }
 
-        var entity = mapper.Map<RoleRequest, Role>(request.Model);
+        var entity = mapper.Map<CreateRoleRequest, Role>(request.Model);
         
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
