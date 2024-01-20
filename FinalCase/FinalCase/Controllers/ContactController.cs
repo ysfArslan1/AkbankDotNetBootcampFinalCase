@@ -22,6 +22,7 @@ public class ContactController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<List<ContactResponse>>> Get()
     {
         var operation = new GetAllContactQuery();
@@ -31,6 +32,7 @@ public class ContactController : ControllerBase
 
     // Database bulunan Contact verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<ContactResponse>> Get(int id)
     {
         var operation = new GetContactByIdQuery(id);
@@ -40,6 +42,7 @@ public class ContactController : ControllerBase
 
     // Database de Contact verisi oluþturmak için kullanýlýr.
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<ContactResponse>> Post([FromBody] CreateContactRequest Contact)
     {
         // Validation iþlemi uygulanýr
@@ -53,6 +56,7 @@ public class ContactController : ControllerBase
 
     // Database den id degeri verilen Contact verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Put(int id, [FromBody] UpdateContactRequest Contact)
     {
         // Validation iþlemi uygulanýr
@@ -66,6 +70,7 @@ public class ContactController : ControllerBase
 
     // Database den id degeri verilen Contact verisi softdelete yapýlýr
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteContactCommand(id);

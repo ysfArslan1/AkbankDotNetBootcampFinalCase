@@ -22,6 +22,7 @@ public class DocumentController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<List<DocumentResponse>>> Get()
     {
         var operation = new GetAllDocumentQuery();
@@ -31,6 +32,7 @@ public class DocumentController : ControllerBase
 
     // Database bulunan Document verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<DocumentResponse>> Get(int id)
     {
         var operation = new GetDocumentByIdQuery(id);
@@ -40,6 +42,7 @@ public class DocumentController : ControllerBase
 
     // Database de Document verisi oluþturmak için kullanýlýr.
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<DocumentResponse>> Post([FromBody] CreateDocumentRequest Document)
     {
         // Validation iþlemi uygulanýr
@@ -53,6 +56,7 @@ public class DocumentController : ControllerBase
 
     // Database den id degeri verilen Document verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Put(int id, [FromBody] UpdateDocumentRequest Document)
     {
         // Validation iþlemi uygulanýr
@@ -66,6 +70,7 @@ public class DocumentController : ControllerBase
 
     // Database den id degeri verilen Document verisi softdelete yapýlýr
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteDocumentCommand(id);

@@ -22,6 +22,7 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<List<RoleResponse>>> Get()
     {
         var operation = new GetAllRoleQuery();
@@ -31,6 +32,7 @@ public class RoleController : ControllerBase
 
     // Database bulunan Role verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<RoleResponse>> Get(int id)
     {
         var operation = new GetRoleByIdQuery(id);
@@ -40,6 +42,7 @@ public class RoleController : ControllerBase
 
     // Database de Role verisi oluþturmak için kullanýlýr.
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<RoleResponse>> Post([FromBody] CreateRoleRequest Role)
     {
         // Validation iþlemi uygulanýr
@@ -53,6 +56,7 @@ public class RoleController : ControllerBase
 
     // Database den id degeri verilen Role verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Put(int id, [FromBody] UpdateRoleRequest Role)
     {
         // Validation iþlemi uygulanýr
@@ -66,6 +70,7 @@ public class RoleController : ControllerBase
 
     // Database den id degeri verilen Role verisi softdelete yapýlýr
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteRoleCommand(id);

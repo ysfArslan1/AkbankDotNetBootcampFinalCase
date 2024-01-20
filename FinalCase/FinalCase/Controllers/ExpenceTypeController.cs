@@ -22,6 +22,7 @@ public class ExpenceTypeController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<List<ExpenceTypeResponse>>> Get()
     {
         var operation = new GetAllExpenceTypeQuery();
@@ -31,6 +32,7 @@ public class ExpenceTypeController : ControllerBase
 
     // Database bulunan ExpenceType verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<ExpenceTypeResponse>> Get(int id)
     {
         var operation = new GetExpenceTypeByIdQuery(id);
@@ -40,6 +42,7 @@ public class ExpenceTypeController : ControllerBase
 
     // Database de ExpenceType verisi oluþturmak için kullanýlýr.
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<ExpenceTypeResponse>> Post([FromBody] CreateExpenceTypeRequest ExpenceType)
     {
         // Validation iþlemi uygulanýr
@@ -53,6 +56,7 @@ public class ExpenceTypeController : ControllerBase
 
     // Database den id degeri verilen ExpenceType verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Put(int id, [FromBody] UpdateExpenceTypeRequest ExpenceType)
     {
         // Validation iþlemi uygulanýr
@@ -66,6 +70,7 @@ public class ExpenceTypeController : ControllerBase
 
     // Database den id degeri verilen ExpenceType verisi softdelete yapýlýr
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteExpenceTypeCommand(id);

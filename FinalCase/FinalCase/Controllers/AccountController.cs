@@ -22,6 +22,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<List<AccountResponse>>> Get()
     {
         var operation = new GetAllAccountQuery();
@@ -31,6 +32,7 @@ public class AccountController : ControllerBase
 
     // Database bulunan Account verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<AccountResponse>> Get(int id)
     {
         var operation = new GetAccountByIdQuery(id);
@@ -40,6 +42,7 @@ public class AccountController : ControllerBase
 
     // Database de Account verisi oluþturmak için kullanýlýr.
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<AccountResponse>> Post([FromBody] CreateAccountRequest Account)
     {
         // Validation iþlemi uygulanýr
@@ -53,6 +56,7 @@ public class AccountController : ControllerBase
 
     // Database den id degeri verilen Account verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Put(int id, [FromBody] UpdateAccountRequest Account)
     {
         // Validation iþlemi uygulanýr
@@ -66,6 +70,7 @@ public class AccountController : ControllerBase
 
     // Database den id degeri verilen Account verisi softdelete yapýlýr
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteAccountCommand(id);

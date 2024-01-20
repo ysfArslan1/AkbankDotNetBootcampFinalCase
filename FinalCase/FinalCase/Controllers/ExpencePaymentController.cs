@@ -22,6 +22,7 @@ public class ExpencePaymentController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<List<ExpencePaymentResponse>>> Get()
     {
         var operation = new GetAllExpencePaymentQuery();
@@ -31,6 +32,7 @@ public class ExpencePaymentController : ControllerBase
 
     // Database bulunan ExpencePayment verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<ExpencePaymentResponse>> Get(int id)
     {
         var operation = new GetExpencePaymentByIdQuery(id);
@@ -40,6 +42,7 @@ public class ExpencePaymentController : ControllerBase
 
     // Database de ExpencePayment verisi oluþturmak için kullanýlýr.
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<ExpencePaymentResponse>> Post([FromBody] CreateExpencePaymentRequest ExpencePayment)
     {
         // Validation iþlemi uygulanýr
@@ -53,6 +56,7 @@ public class ExpencePaymentController : ControllerBase
 
     // Database den id degeri verilen ExpencePayment verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Put(int id, [FromBody] UpdateExpencePaymentRequest ExpencePayment)
     {
         // Validation iþlemi uygulanýr
@@ -66,6 +70,7 @@ public class ExpencePaymentController : ControllerBase
 
     // Database den id degeri verilen ExpencePayment verisi softdelete yapýlýr
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteExpencePaymentCommand(id);

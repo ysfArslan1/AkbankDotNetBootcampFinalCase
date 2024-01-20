@@ -22,6 +22,7 @@ public class ExpenceNotifyController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<List<ExpenceNotifyResponse>>> Get()
     {
         var operation = new GetAllExpenceNotifyQuery();
@@ -31,6 +32,7 @@ public class ExpenceNotifyController : ControllerBase
 
     // Database bulunan ExpenceNotify verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<ExpenceNotifyResponse>> Get(int id)
     {
         var operation = new GetExpenceNotifyByIdQuery(id);
@@ -40,6 +42,7 @@ public class ExpenceNotifyController : ControllerBase
 
     // Database de ExpenceNotify verisi oluþturmak için kullanýlýr.
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<ExpenceNotifyResponse>> Post([FromBody] CreateExpenceNotifyRequest ExpenceNotify)
     {
         // Validation iþlemi uygulanýr
@@ -53,6 +56,7 @@ public class ExpenceNotifyController : ControllerBase
 
     // Database den id degeri verilen ExpenceNotify verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Put(int id, [FromBody] UpdateExpenceNotifyRequest ExpenceNotify)
     {
         // Validation iþlemi uygulanýr
@@ -66,6 +70,7 @@ public class ExpenceNotifyController : ControllerBase
 
     // Database den id degeri verilen ExpenceNotify verisi softdelete yapýlýr
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteExpenceNotifyCommand(id);

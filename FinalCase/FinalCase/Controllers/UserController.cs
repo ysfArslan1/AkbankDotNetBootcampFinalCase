@@ -22,6 +22,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<List<UserResponse>>> Get()
     {
         var operation = new GetAllUserQuery();
@@ -31,6 +32,7 @@ public class UserController : ControllerBase
 
     // Database bulunan User verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<UserResponse>> Get(int id)
     {
         var operation = new GetUserByIdQuery(id);
@@ -40,6 +42,7 @@ public class UserController : ControllerBase
 
     // Database de User verisi oluþturmak için kullanýlýr.
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<UserResponse>> Post([FromBody] CreateUserRequest User)
     {
         // Validation iþlemi uygulanýr
@@ -53,6 +56,7 @@ public class UserController : ControllerBase
 
     // Database den id degeri verilen User verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Put(int id, [FromBody] UpdateUserRequest User)
     {
         // Validation iþlemi uygulanýr
@@ -66,6 +70,7 @@ public class UserController : ControllerBase
 
     // Database den id degeri verilen User verisi softdelete yapýlýr
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteUserCommand(id);
