@@ -1,6 +1,8 @@
 ﻿using FinalCase.Services;
 using FluentValidation;
 using Newtonsoft.Json;
+using Serilog;
+using System;
 using System.Diagnostics;
 using System.Net;
 
@@ -9,7 +11,7 @@ namespace FinalCase.Middlewares
     public class CustomExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-         private readonly ILoggerService _loggerService;
+        private readonly ILoggerService _loggerService;
         public CustomExceptionMiddleware(RequestDelegate next, ILoggerService loggerService)
         {
             _next = next;
@@ -22,7 +24,7 @@ namespace FinalCase.Middlewares
             {
                 // Request degerleri console ekranına yazdırırlır.
                 string message = "[Request] HTTP: " + context.Request.Method + " - " + context.Request.Path;
-               _loggerService.Write(message);
+                _loggerService.Write(message);
 
                 await _next.Invoke(context);
                 watch.Stop();
@@ -34,57 +36,31 @@ namespace FinalCase.Middlewares
             }
             catch (ValidationException validationEx)
             {
-                watch.Stop();
-                await HandleValidationException(context, validationEx, watch);
+
+                // SeliLog ile validation hatalarınıın kayıt edilmesi
+                Log.Error(validationEx, "ValidationError");
+                Log.Error(
+                    $"Path={context.Request.Path} || " +
+                    $"Method={context.Request.Method} || " +
+                    $"Exception={validationEx.Message}"
+                );
+
             }
             catch (Exception ex)
             {
-                watch.Stop();
-                await HandleException(context, ex, watch);
+
+                // SeliLog ile hataların kayıt edilmesi
+                Log.Error(ex, "UnexpectedError");
+                Log.Fatal(
+                    $"Path={context.Request.Path} || " +
+                    $"Method={context.Request.Method} || " +
+                    $"Exception={ex.Message}"
+                );
+
             }
-            
+
         }
 
-        // Validation hataları handle edilir.
-        private Task HandleValidationException(HttpContext context, ValidationException validationEx, Stopwatch watch)
-        {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-            // Validasyon hataları console ekranına yazdırılır
-            string message = "[Validation Error] HTTP: " + context.Request.Method + " - " + context.Response.StatusCode +
-                    " Error Mesage: " + validationEx.Message + " in " + watch.Elapsed.TotalMilliseconds + " ms";
-            _loggerService.Write(message);
-
-
-            // Validasyon hataları geri dönülür
-            var validationErrors = validationEx.Errors.Select(error =>
-            {
-                return new
-                {
-                    propertyName = error.PropertyName,
-                    errorMessage = error.ErrorMessage
-                };
-            });
-
-            var result = JsonConvert.SerializeObject(new { validationErrors }, Formatting.None);
-            return context.Response.WriteAsync(result);
-        }
-        private Task HandleException(HttpContext context, Exception ex, Stopwatch watch)
-        {
-
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            //  hatalar console ekranına yazdırılır
-            string message = "[Error] HTTP: " + context.Request.Method + " - " + context.Response.StatusCode +
-                    " Error Mesage: " + ex.Message + " in " + watch.Elapsed.TotalMilliseconds + " ms";
-            _loggerService.Write(message);
-
-            //  hatalar geri dönülür
-            var result =JsonConvert.SerializeObject(new { error  = ex.Message },Formatting.None);
-            return context.Response.WriteAsync(result);
-        }
     }
     static public class CustomExceptionMiddlewareExtention
     {
@@ -93,4 +69,5 @@ namespace FinalCase.Middlewares
             return builder.UseMiddleware<CustomExceptionMiddleware>();
         }
     }
+   
 }
