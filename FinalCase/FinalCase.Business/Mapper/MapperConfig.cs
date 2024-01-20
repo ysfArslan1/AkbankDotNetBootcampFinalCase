@@ -1,4 +1,5 @@
 using AutoMapper;
+using FinalCase.Base.Encryption;
 using FinalCase.Data.Entity;
 using FinalCase.Schema;
 
@@ -40,7 +41,8 @@ public class MapperConfig : Profile
             .ForMember(dest => dest.UserName,
                 src => src.MapFrom(x => x.User.FirstName + " " + x.User.LastName));
 
-        CreateMap<CreateUserRequest, User>();
+        CreateMap<CreateUserRequest, User>()
+        .ForMember(dest => dest.Password, opt => opt.MapFrom(src => Md5Extension.GetHash(src.Password.Trim())));
         CreateMap<User, UserResponse>()
             .ForMember(dest => dest.Role,
                 src => src.MapFrom(x => x.Role.Name));

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FinalCase.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class mig3 : Migration
+    public partial class mig1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,8 +57,11 @@ namespace FinalCase.Data.Migrations
                     IdentityNumber = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastActivityDate = table.Column<DateTime>(type: "datetime2", maxLength: 200, nullable: false),
+                    PasswordRetryCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     RoleId = table.Column<int>(type: "int", maxLength: 200, nullable: false),
                     InsertUserId = table.Column<int>(type: "int", nullable: false),
                     InsertDate = table.Column<DateTime>(type: "datetime2", nullable: false),

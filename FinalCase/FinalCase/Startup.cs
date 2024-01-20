@@ -1,13 +1,18 @@
 ﻿
 using AutoMapper;
+using FinalCase.Base.Token;
 using FinalCase.Business.Cqrs;
 using FinalCase.Business.Mapper;
 using FinalCase.Data.DbOperations;
 using FinalCase.Middlewares;
 using FinalCase.Services;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 
 namespace FinalCase
 {
@@ -41,9 +46,58 @@ namespace FinalCase
             services.AddControllers(); // httppatch için eklendi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
 
-           }
+            // Swagger üzerinden yetkilendirmeler için token girilme alanı oluşturuldu
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vb Api Management", Version = "v1.0" });
+
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Vb Management for IT Company",
+                    Description = "Enter JWT Bearer token **_only_**",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                { securityScheme, new string[] { } }
+            });
+            });
+
+            // JwtToken configurasyonları yapıldı
+            JwtConfig jwtConfig = Configuration.GetSection("JwtConfig").Get<JwtConfig>();
+            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = true;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtConfig.Issuer,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.Secret)),
+                    ValidAudience = jwtConfig.Audience,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(2)
+                };
+            });
+
+        }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -55,6 +109,8 @@ namespace FinalCase
             }
 
             app.UseHttpsRedirection();
+            // Yetkilendirme eklendi
+            app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();
 

@@ -40,6 +40,12 @@ public class UserCommandHandler :
             return new ApiResponse<UserResponse>("Role not found");
         }
 
+        var checkEmail = await dbContext.Set<Contact>().Where(x => x.Email == request.Model.Email)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkEmail != null)
+        {
+            return new ApiResponse<UserResponse>($"{request.Model.Email} is used by another User.");
+        }
 
         var entity = mapper.Map<CreateUserRequest, User>(request.Model);
         
@@ -67,6 +73,13 @@ public class UserCommandHandler :
         {
             return new ApiResponse("Role not found");
         }
+        var checkEmail = await dbContext.Set<Contact>().Where(x => x.Email == request.Model.Email)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (checkEmail != null)
+        {
+            return new ApiResponse($"{request.Model.Email} is used by another User.");
+        }
+
 
         fromdb.FirstName = request.Model.FirstName;
         fromdb.LastName = request.Model.LastName;

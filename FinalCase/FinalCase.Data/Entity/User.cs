@@ -14,8 +14,11 @@ namespace FinalCase.Data.Entity
         public string IdentityNumber { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTime LastActivityDate { get; set; }
+        public int PasswordRetryCount { get; set; }
         public int RoleId { get; set; }
         public virtual Role Role { get; set; }
     }
@@ -32,9 +35,12 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.IdentityNumber).IsRequired(true).HasMaxLength(11);
             builder.Property(x => x.FirstName).IsRequired(true).HasMaxLength(200);
             builder.Property(x => x.LastName).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.Email).IsRequired(true).HasMaxLength(100);
+            builder.Property(x => x.Password).IsRequired(true).HasMaxLength(250);
             builder.Property(x => x.DateOfBirth).IsRequired(true);
             builder.Property(x => x.LastActivityDate).IsRequired(true).HasMaxLength(200);
             builder.Property(x => x.RoleId).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.PasswordRetryCount).IsRequired(true).HasDefaultValue(0);
 
             builder.HasIndex(x => x.IdentityNumber).IsUnique(true);
 

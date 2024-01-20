@@ -1,4 +1,5 @@
-﻿using FinalCase.Data.Entity;
+﻿using FinalCase.Base.Encryption;
+using FinalCase.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -23,15 +24,32 @@ namespace FinalCase.Data.DbOperations
                     new User
                     {
                         IdentityNumber="11111111111",
-                        FirstName="A-",
-                        LastName="D-",
-                        DateOfBirth=DateTime.Now.AddYears(-23),
+                        FirstName="admin",
+                        LastName= "admin",
+                        Email= "a@gmail.com",
+                        Password=  Md5Extension.GetHash("12345"),
+                        DateOfBirth =DateTime.Now.AddYears(-23),
                         LastActivityDate=DateTime.Now.AddDays(-2),
                         Role=new Role
                         {
                             Name="Admin"
                         },
-                    });
+                    },
+                    new User
+                    {
+                        IdentityNumber = "11111111112",
+                        FirstName = "employee",
+                        LastName = "employee",
+                        Email = "e@gmail.com",
+                        Password = Md5Extension.GetHash("12345"),
+                        DateOfBirth = DateTime.Now.AddYears(-23),
+                        LastActivityDate = DateTime.Now.AddDays(-2),
+                        Role = new Role
+                        {
+                            Name = "Employee"
+                        },
+                    }
+                    );
                     content.SaveChanges();
                 }
                 if (!content.Contacts.Any())
@@ -39,7 +57,7 @@ namespace FinalCase.Data.DbOperations
                     content.Contacts.AddRange(
                     new Contact
                     {
-                        UserId=1,
+                        UserId=2,
                         Email="a---@gmail.com",
                         PhoneNumber="11111111111"
                     });
@@ -76,7 +94,7 @@ namespace FinalCase.Data.DbOperations
                     content.ExpenceResponds.AddRange(
                     new ExpenceRespond
                     {
-                        UserId = 1,
+                        UserId = 2,
                         Explanation = "Onaylandı",
                         ExpenceNotifyId=1,
                         isApproved=true,
@@ -88,7 +106,7 @@ namespace FinalCase.Data.DbOperations
                     content.Accounts.AddRange(
                     new Account
                     {
-                        UserId=1,
+                        UserId=2,
                         AccountNumber=11111,
                         IBAN="6345243141",
                         Balance=10000,
