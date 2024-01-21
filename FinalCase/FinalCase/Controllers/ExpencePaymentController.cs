@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FinalCase.Controllers;
 
@@ -49,7 +50,10 @@ public class ExpencePaymentController : ControllerBase
         CreateExpencePaymentRequestValidator validator = new CreateExpencePaymentRequestValidator();
         validator.ValidateAndThrow(ExpencePayment);
 
-        var operation = new CreateExpencePaymentCommand(ExpencePayment);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new CreateExpencePaymentCommand(CurrentUserId,ExpencePayment);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -63,7 +67,10 @@ public class ExpencePaymentController : ControllerBase
         UpdateExpencePaymentRequestValidator validator = new UpdateExpencePaymentRequestValidator();
         validator.ValidateAndThrow(ExpencePayment);
 
-        var operation = new UpdateExpencePaymentCommand(id, ExpencePayment);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateExpencePaymentCommand(id,CurrentUserId, ExpencePayment);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -77,4 +84,32 @@ public class ExpencePaymentController : ControllerBase
         var result = await mediator.Send(operation);
         return result;
     }
+
+    // Employee
+
+    [HttpGet("Employee")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<List<ExpencePaymentResponse>>> EmployeeGet()
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetAllMyExpencePaymentQuery(CurrentUserId);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Database bulunan ExpencePayment verilerinin çekilmasi için kullanýlýr.
+    [HttpGet("Employee/{id}")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<ExpencePaymentResponse>> EmployeeGet(int id)
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetMyExpencePaymentByIdQuery(id,CurrentUserId);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
 }

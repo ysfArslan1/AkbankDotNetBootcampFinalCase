@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FinalCase.Controllers;
 
@@ -49,7 +50,10 @@ public class ExpenceRespondController : ControllerBase
         CreateExpenceRespondRequestValidator validator = new CreateExpenceRespondRequestValidator();
         validator.ValidateAndThrow(ExpenceRespond);
 
-        var operation = new CreateExpenceRespondCommand(ExpenceRespond);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new CreateExpenceRespondCommand(CurrentUserId,ExpenceRespond);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -63,7 +67,10 @@ public class ExpenceRespondController : ControllerBase
         UpdateExpenceRespondRequestValidator validator = new UpdateExpenceRespondRequestValidator();
         validator.ValidateAndThrow(ExpenceRespond);
 
-        var operation = new UpdateExpenceRespondCommand(id, ExpenceRespond);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateExpenceRespondCommand(id,CurrentUserId, ExpenceRespond);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -74,6 +81,33 @@ public class ExpenceRespondController : ControllerBase
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteExpenceRespondCommand(id);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Employee
+
+    [HttpGet("Employee")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<List<ExpenceRespondResponse>>> EmployeeGet()
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetAllMyExpenceRespondQuery(CurrentUserId);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Database bulunan ExpenceRespond verilerinin çekilmasi için kullanýlýr.
+    [HttpGet("Employee/{id}")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<ExpenceRespondResponse>> EmployeeGet(int id)
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetMyExpenceRespondByIdQuery(id,CurrentUserId);
         var result = await mediator.Send(operation);
         return result;
     }

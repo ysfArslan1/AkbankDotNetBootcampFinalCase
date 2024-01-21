@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FinalCase.Controllers;
 
@@ -43,13 +44,16 @@ public class UserController : ControllerBase
     // Database de User verisi oluþturmak için kullanýlýr.
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ApiResponse<UserResponse>> Post([FromBody] CreateUserRequest User)
+    public async Task<ApiResponse<UserResponse>> Post([FromBody] CreateUserRequest user)
     {
         // Validation iþlemi uygulanýr
         CreateUserRequestValidator validator = new CreateUserRequestValidator();
-        validator.ValidateAndThrow(User);
+        validator.ValidateAndThrow(user);
 
-        var operation = new CreateUserCommand(User);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new CreateUserCommand(CurrentUserId, user);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -57,13 +61,16 @@ public class UserController : ControllerBase
     // Database den id degeri verilen User verisi alýnmak için kullanýlýr.
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ApiResponse> Put(int id, [FromBody] UpdateUserRequest User)
+    public async Task<ApiResponse> Put(int id, [FromBody] UpdateUserRequest user)
     {
         // Validation iþlemi uygulanýr
         UpdateUserRequestValidator validator = new UpdateUserRequestValidator();
-        validator.ValidateAndThrow(User);
+        validator.ValidateAndThrow(user);
 
-        var operation = new UpdateUserCommand(id, User);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateUserCommand(id,CurrentUserId, user);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -74,6 +81,38 @@ public class UserController : ControllerBase
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteUserCommand(id);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Employee
+
+    // Database bulunan User verilerinin çekilmasi için kullanýlýr.
+    [HttpGet("Employee")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<UserResponse>> EmployeeGet()
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetUserByIdQuery(CurrentUserId);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Database den id degeri verilen User verisi alýnmak için kullanýlýr.
+    [HttpPut("Employee")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse> EmployeePut( [FromBody] UpdateUserRequest user)
+    {
+        // Validation iþlemi uygulanýr
+        UpdateUserRequestValidator validator = new UpdateUserRequestValidator();
+        validator.ValidateAndThrow(user);
+
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateUserCommand(CurrentUserId, CurrentUserId, user);
         var result = await mediator.Send(operation);
         return result;
     }

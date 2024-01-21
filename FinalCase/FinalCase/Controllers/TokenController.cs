@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using FinalCase.Base.Response;
 using FinalCase.Business.Cqrs;
 using FinalCase.Schema;
+using NuGet.Common;
 
 namespace FinalCase.Controllers;
 
@@ -25,4 +26,6 @@ public class TokenController : ControllerBase
         var result = await mediator.Send(operation);
         return result;
     }
+
+  
 }

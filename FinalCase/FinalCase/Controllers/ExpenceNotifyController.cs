@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FinalCase.Controllers;
 
@@ -42,14 +43,17 @@ public class ExpenceNotifyController : ControllerBase
 
     // Database de ExpenceNotify verisi oluþturmak için kullanýlýr.
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<ApiResponse<ExpenceNotifyResponse>> Post([FromBody] CreateExpenceNotifyRequest ExpenceNotify)
     {
         // Validation iþlemi uygulanýr
         CreateExpenceNotifyRequestValidator validator = new CreateExpenceNotifyRequestValidator();
         validator.ValidateAndThrow(ExpenceNotify);
 
-        var operation = new CreateExpenceNotifyCommand(ExpenceNotify);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new CreateExpenceNotifyCommand(CurrentUserId,ExpenceNotify);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -63,7 +67,10 @@ public class ExpenceNotifyController : ControllerBase
         UpdateExpenceNotifyRequestValidator validator = new UpdateExpenceNotifyRequestValidator();
         validator.ValidateAndThrow(ExpenceNotify);
 
-        var operation = new UpdateExpenceNotifyCommand(id, ExpenceNotify);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateExpenceNotifyCommand(id,CurrentUserId, ExpenceNotify);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -74,6 +81,63 @@ public class ExpenceNotifyController : ControllerBase
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteExpenceNotifyCommand(id);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    //Employee
+
+    [HttpGet("Employee")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<List<ExpenceNotifyResponse>>> EmployeeGet()
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetAllMyExpenceNotifyQuery(CurrentUserId);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Database bulunan ExpenceNotify verilerinin çekilmasi için kullanýlýr.
+    [HttpGet("Employee/{id}")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<ExpenceNotifyResponse>> EmployeeGet(int id)
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetMyExpenceNotifyByIdQuery(id,CurrentUserId);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Database den id degeri verilen ExpenceNotify verisi alýnmak için kullanýlýr.
+    [HttpPut("Employee/{id}")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse> EmployeePut(int id, [FromBody] UpdateExpenceNotifyRequest ExpenceNotify)
+    {
+        // Validation iþlemi uygulanýr
+        UpdateExpenceNotifyRequestValidator validator = new UpdateExpenceNotifyRequestValidator();
+        validator.ValidateAndThrow(ExpenceNotify);
+
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateMyExpenceNotifyCommand(id, CurrentUserId, ExpenceNotify);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Database den id degeri verilen ExpenceNotify verisi softdelete yapýlýr
+    [HttpDelete("Employee/{id}")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse> EmployeeDelete(int id)
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new DeleteMyExpenceNotifyCommand(id,CurrentUserId);
         var result = await mediator.Send(operation);
         return result;
     }

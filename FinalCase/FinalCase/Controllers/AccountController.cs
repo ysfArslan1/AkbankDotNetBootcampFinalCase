@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FinalCase.Controllers;
 
@@ -42,14 +43,18 @@ public class AccountController : ControllerBase
 
     // Database de Account verisi oluþturmak için kullanýlýr.
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<ApiResponse<AccountResponse>> Post([FromBody] CreateAccountRequest Account)
     {
         // Validation iþlemi uygulanýr
         CreateAccountRequestValidator validator = new CreateAccountRequestValidator();
         validator.ValidateAndThrow(Account);
 
-        var operation = new CreateAccountCommand(Account);
+
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new CreateAccountCommand(Account, CurrentUserId);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -63,7 +68,11 @@ public class AccountController : ControllerBase
         UpdateAccountRequestValidator validator = new UpdateAccountRequestValidator();
         validator.ValidateAndThrow(Account);
 
-        var operation = new UpdateAccountCommand(id, Account);
+
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateAccountCommand(id,CurrentUserId, Account);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -74,6 +83,65 @@ public class AccountController : ControllerBase
     public async Task<ApiResponse> Delete(int id)
     {
         var operation = new DeleteAccountCommand(id);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Employee
+
+    [HttpGet("Employee")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<List<AccountResponse>>> EmployeeGet()
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetAllMyAccountQuery(CurrentUserId);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Database bulunan Account verilerinin çekilmasi için kullanýlýr.
+    [HttpGet("Employee/{id}")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse<AccountResponse>> EmployeeGet(int id)
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new GetMyAccountByIdQuery(id,CurrentUserId);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+
+    // Database den id degeri verilen Account verisi alýnmak için kullanýlýr.
+    [HttpPut("Employee/{id}")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse> EmployeePut(int id, [FromBody] UpdateAccountRequest Account)
+    {
+        // Validation iþlemi uygulanýr
+        UpdateAccountRequestValidator validator = new UpdateAccountRequestValidator();
+        validator.ValidateAndThrow(Account);
+
+
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateAccountCommand(id, CurrentUserId, Account);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
+    // Database den id degeri verilen Account verisi softdelete yapýlýr
+    [HttpDelete("Employee/{id}")]
+    [Authorize(Roles = "Admin,Employee")]
+    public async Task<ApiResponse> EmployeeDelete(int id)
+    {
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new DeleteMyAccountCommand(id,CurrentUserId);
         var result = await mediator.Send(operation);
         return result;
     }

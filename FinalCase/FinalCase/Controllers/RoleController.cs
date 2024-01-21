@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FinalCase.Controllers;
 
@@ -49,7 +50,10 @@ public class RoleController : ControllerBase
         CreateRoleRequestValidator validator = new CreateRoleRequestValidator();
         validator.ValidateAndThrow(Role);
 
-        var operation = new CreateRoleCommand(Role);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new CreateRoleCommand(CurrentUserId,Role);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -63,7 +67,10 @@ public class RoleController : ControllerBase
         UpdateRoleRequestValidator validator = new UpdateRoleRequestValidator();
         validator.ValidateAndThrow(Role);
 
-        var operation = new UpdateRoleCommand(id, Role);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateRoleCommand(id,CurrentUserId, Role);
         var result = await mediator.Send(operation);
         return result;
     }

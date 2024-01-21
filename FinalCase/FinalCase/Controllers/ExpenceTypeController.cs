@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FinalCase.Controllers;
 
@@ -22,7 +23,7 @@ public class ExpenceTypeController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<ApiResponse<List<ExpenceTypeResponse>>> Get()
     {
         var operation = new GetAllExpenceTypeQuery();
@@ -32,7 +33,7 @@ public class ExpenceTypeController : ControllerBase
 
     // Database bulunan ExpenceType verilerinin çekilmasi için kullanýlýr.
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Employee")]
     public async Task<ApiResponse<ExpenceTypeResponse>> Get(int id)
     {
         var operation = new GetExpenceTypeByIdQuery(id);
@@ -49,7 +50,10 @@ public class ExpenceTypeController : ControllerBase
         CreateExpenceTypeRequestValidator validator = new CreateExpenceTypeRequestValidator();
         validator.ValidateAndThrow(ExpenceType);
 
-        var operation = new CreateExpenceTypeCommand(ExpenceType);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new CreateExpenceTypeCommand(CurrentUserId,ExpenceType);
         var result = await mediator.Send(operation);
         return result;
     }
@@ -63,7 +67,10 @@ public class ExpenceTypeController : ControllerBase
         UpdateExpenceTypeRequestValidator validator = new UpdateExpenceTypeRequestValidator();
         validator.ValidateAndThrow(ExpenceType);
 
-        var operation = new UpdateExpenceTypeCommand(id, ExpenceType);
+        string _id = (User.Identity as ClaimsIdentity).FindFirst("Id")?.Value;
+        int CurrentUserId = int.Parse(_id);
+
+        var operation = new UpdateExpenceTypeCommand(id,CurrentUserId, ExpenceType);
         var result = await mediator.Send(operation);
         return result;
     }
