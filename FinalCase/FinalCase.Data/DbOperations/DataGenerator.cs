@@ -58,8 +58,31 @@ namespace FinalCase.Data.DbOperations
                     new Contact
                     {
                         UserId=2,
-                        Email="a---@gmail.com",
+                        Email="e---@gmail.com",
                         PhoneNumber="11111111111"
+                    });
+                    content.SaveChanges();
+                }
+                if (!content.Accounts.Any())
+                {
+                    content.Accounts.AddRange(
+                    new Account
+                    {
+                        UserId = 1,
+                        AccountNumber = 11111,
+                        IBAN = "6345243141",
+                        Balance = 100000,
+                        CurrencyType = "Tl",
+                        Name = "Main Acoount"
+                    },
+                    new Account
+                    {
+                        UserId = 2,
+                        AccountNumber = 11112,
+                        IBAN = "6345243142",
+                        Balance = 10000,
+                        CurrencyType = "Tl",
+                        Name = "Employee Business"
                     });
                     content.SaveChanges();
                 }
@@ -68,8 +91,8 @@ namespace FinalCase.Data.DbOperations
                     content.ExpenceNotifies.AddRange(
                     new ExpenceNotify
                     {
-                        UserId=1,
-                        Explanation="Initial",
+                        UserId=2,
+                        Explanation="Initial Expence",
                         Amount=100,
                         TransferType="TL",
                         ExpenceType=new ExpenceType
@@ -98,37 +121,23 @@ namespace FinalCase.Data.DbOperations
                         Explanation = "Onaylandı",
                         ExpenceNotifyId=1,
                         isApproved=true,
-                    });
-                    content.SaveChanges();
-                }
-                if (!content.Accounts.Any())
-                {
-                    content.Accounts.AddRange(
-                    new Account
-                    {
-                        UserId=2,
-                        AccountNumber=11111,
-                        IBAN="6345243141",
-                        Balance=10000,
-                        CurrencyType="Tl",
-                        Name="Akbank Business"
-                    });
-                    content.SaveChanges();
-                }
-                if (!content.ExpencePayments.Any())
-                {
-                    content.ExpencePayments.AddRange(
-                    new ExpencePayment
-                    {
-                        ExpenceRespondId = 1,
-                        AccountId = 1,
-                        Description = "Başarıyla gerçekleşti",
-                        TransferType="TL",
-                        TransactionDate=DateTime.Now.AddHours(-2),
                         IsDeposited = true,
                     });
                     content.SaveChanges();
                 }
+                
+                //if (!content.ExpencePayments.Any())
+                //{
+                //    content.ExpencePayments.AddRange(
+                //    new ExpencePayment
+                //    {
+                //        ExpenceRespondId = 1,
+                //        AccountId = 1,
+                //        TransferType="TL",
+                //        TransactionDate=DateTime.Now.AddHours(-2),
+                //    });
+                //    content.SaveChanges();
+                //}
 
 
 

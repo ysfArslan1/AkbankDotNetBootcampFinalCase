@@ -11,6 +11,7 @@ public class CreateExpenceRespondRequest : BaseRequest
     public int ExpenceNotifyId { get; set; }
     public string Explanation { get; set; }
     public bool isApproved { get; set; }
+    public bool IsDeposited { get; set; }
 }
 // ExpenceRespond sýnýfý için gelen update requestleriný almakta kullanýlýr.
 public class UpdateExpenceRespondRequest : BaseRequest
@@ -18,6 +19,7 @@ public class UpdateExpenceRespondRequest : BaseRequest
 
     public string Explanation { get; set; }
     public bool isApproved { get; set; }
+    public bool IsDeposited { get; set; }
 }
 
 // ExpenceRespond sýnýfý için response gönderilmekte kullanýlýr.
@@ -27,4 +29,5 @@ public class ExpenceRespondResponse : BaseResponse
     public int ExpenceNotifyId { get; set; }
     public string Explanation { get; set; }
     public bool isApproved { get; set; }
+    public bool IsDeposited { get; set; }
 }

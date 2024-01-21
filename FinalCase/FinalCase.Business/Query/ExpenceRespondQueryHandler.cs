@@ -12,7 +12,9 @@ namespace FinalCase.Business.Query;
 
 public class ExpenceRespondQueryHandler :
     IRequestHandler<GetAllExpenceRespondQuery, ApiResponse<List<ExpenceRespondResponse>>>,
-    IRequestHandler<GetExpenceRespondByIdQuery, ApiResponse<ExpenceRespondResponse>>
+    IRequestHandler<GetExpenceRespondByIdQuery, ApiResponse<ExpenceRespondResponse>>,
+    IRequestHandler<GetAllMyExpenceRespondQuery, ApiResponse<List<ExpenceRespondResponse>>>,
+    IRequestHandler<GetMyExpenceRespondByIdQuery, ApiResponse<ExpenceRespondResponse>>
 {
     private readonly VbDbContext dbContext;
     private readonly IMapper mapper;
@@ -40,6 +42,7 @@ public class ExpenceRespondQueryHandler :
          return new ApiResponse<List<ExpenceRespondResponse>>(mappedList);
     }
 
+
     // Ýd deðeri ile istenilen ExpenceRespond deðerlerinin alýndýðý query
     public async Task<ApiResponse<ExpenceRespondResponse>> Handle(GetExpenceRespondByIdQuery request,
         CancellationToken cancellationToken)
@@ -58,4 +61,41 @@ public class ExpenceRespondQueryHandler :
         return new ApiResponse<ExpenceRespondResponse>(mapped);
     }
 
+    // Employee
+
+    // ExpenceRespond sýnýfýnýn database içerisinde bulunan verilerinin alýndýgý query
+    public async Task<ApiResponse<List<ExpenceRespondResponse>>> Handle(GetAllMyExpenceRespondQuery request,
+        CancellationToken cancellationToken)
+    {
+        var list = await dbContext.Set<ExpenceRespond>().Where(x => x.IsActive == true && x.UserId == request.CurrentUserId)
+            .Include(x => x.User).ToListAsync(cancellationToken);
+
+        // deðerin kontrol edilmesi
+        if (list == null)
+        {
+            return new ApiResponse<List<ExpenceRespondResponse>>("Record not found");
+        }
+
+        var mappedList = mapper.Map<List<ExpenceRespond>, List<ExpenceRespondResponse>>(list);
+        return new ApiResponse<List<ExpenceRespondResponse>>(mappedList);
+    }
+
+
+    // Ýd deðeri ile istenilen ExpenceRespond deðerlerinin alýndýðý query
+    public async Task<ApiResponse<ExpenceRespondResponse>> Handle(GetMyExpenceRespondByIdQuery request,
+        CancellationToken cancellationToken)
+    {
+        var entity = await dbContext.Set<ExpenceRespond>()
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.Id == request.Id && x.IsActive == true && x.UserId == request.CurrentUserId, cancellationToken);
+
+        // deðerin kontrol edilmesi
+        if (entity == null)
+        {
+            return new ApiResponse<ExpenceRespondResponse>("Record not found");
+        }
+
+        var mapped = mapper.Map<ExpenceRespond, ExpenceRespondResponse>(entity);
+        return new ApiResponse<ExpenceRespondResponse>(mapped);
+    }
 }

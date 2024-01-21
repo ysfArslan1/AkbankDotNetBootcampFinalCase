@@ -34,7 +34,9 @@ public class ExpenceTypeCommandHandler :
             return new ApiResponse<ExpenceTypeResponse>($"{request.Model.Name} is used by another ExpenceType.");
         }
         var entity = mapper.Map<CreateExpenceTypeRequest, ExpenceType>(request.Model);
-        
+        entity.InsertUserId = request.CurrentUserId;
+        entity.InsertDate = DateTime.Now;
+
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -62,7 +64,9 @@ public class ExpenceTypeCommandHandler :
 
         fromdb.Name = request.Model.Name;
         fromdb.Description = request.Model.Description;
-        
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
+
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
     }

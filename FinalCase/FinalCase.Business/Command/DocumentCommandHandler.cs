@@ -12,7 +12,9 @@ namespace FinalCase.Business.Command;
 public class DocumentCommandHandler :
     IRequestHandler<CreateDocumentCommand, ApiResponse<DocumentResponse>>,
     IRequestHandler<UpdateDocumentCommand,ApiResponse>,
-    IRequestHandler<DeleteDocumentCommand,ApiResponse>
+    IRequestHandler<DeleteDocumentCommand,ApiResponse>,
+    IRequestHandler<UpdateMyDocumentCommand, ApiResponse>,
+    IRequestHandler<DeleteMyDocumentCommand, ApiResponse>
 
 {
     private readonly VbDbContext dbContext;
@@ -35,7 +37,10 @@ public class DocumentCommandHandler :
         }
 
         var entity = mapper.Map<CreateDocumentRequest, Document>(request.Model);
-        
+        entity.InsertUserId = request.CurrentUserId;
+        entity.InsertDate = DateTime.Now;
+
+
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -56,7 +61,9 @@ public class DocumentCommandHandler :
         
         fromdb.Description = request.Model.Description;
         fromdb.Content = request.Model.Content;
-        
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
+
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
     }
@@ -65,6 +72,45 @@ public class DocumentCommandHandler :
     public async Task<ApiResponse> Handle(DeleteDocumentCommand request, CancellationToken cancellationToken)
     {
         var fromdb = await dbContext.Set<Document>().Where(x => x.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
+        if (fromdb == null)
+        {
+            return new ApiResponse("Record not found");
+        }
+
+        // soft delete iþlemi yapýlýr
+        fromdb.IsActive = false;
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return new ApiResponse();
+    }
+
+    // Employee
+
+    // Document sýnýfýnýn database de güncellenmesi için kullanýlan command
+    public async Task<ApiResponse> Handle(UpdateMyDocumentCommand request, CancellationToken cancellationToken)
+    {
+        var fromdb = await dbContext.Set<Document>().Where(x => x.Id == request.Id && x.ExpenceNotify.UserId == request.CurrentUserId)
+            .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
+        if (fromdb == null)
+        {
+            return new ApiResponse("Record not found");
+        }
+
+        fromdb.Description = request.Model.Description;
+        fromdb.Content = request.Model.Content;
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return new ApiResponse();
+    }
+
+    // Document sýnýfýnýn database de softdelete ile silinmesini için kullanýlan command
+    public async Task<ApiResponse> Handle(DeleteMyDocumentCommand request, CancellationToken cancellationToken)
+    {
+        var fromdb = await dbContext.Set<Document>().Where(x => x.Id == request.Id && x.ExpenceNotify.UserId == request.CurrentUserId)
             .FirstOrDefaultAsync(cancellationToken);
         // deðerin kontrol edilmesi
         if (fromdb == null)

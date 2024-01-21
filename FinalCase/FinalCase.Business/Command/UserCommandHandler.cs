@@ -48,7 +48,9 @@ public class UserCommandHandler :
         }
 
         var entity = mapper.Map<CreateUserRequest, User>(request.Model);
-        
+        entity.InsertUserId = request.CurrentUserId;
+        entity.InsertDate = DateTime.Now;
+
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -85,7 +87,9 @@ public class UserCommandHandler :
         fromdb.LastName = request.Model.LastName;
         fromdb.DateOfBirth = request.Model.DateOfBirtht;
         fromdb.RoleId = request.Model.RoleId;
-        
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
+
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
     }
@@ -106,4 +110,5 @@ public class UserCommandHandler :
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
     }
+
 }

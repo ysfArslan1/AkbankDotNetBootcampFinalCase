@@ -57,4 +57,6 @@ public class ExpenceTypeQueryHandler :
         return new ApiResponse<ExpenceTypeResponse>(mapped);
     }
 
+    
+
 }

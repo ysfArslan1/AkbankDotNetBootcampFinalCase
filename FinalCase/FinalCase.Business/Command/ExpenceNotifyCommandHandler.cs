@@ -12,7 +12,9 @@ namespace FinalCase.Business.Command;
 public class ExpenceNotifyCommandHandler :
     IRequestHandler<CreateExpenceNotifyCommand, ApiResponse<ExpenceNotifyResponse>>,
     IRequestHandler<UpdateExpenceNotifyCommand,ApiResponse>,
-    IRequestHandler<DeleteExpenceNotifyCommand,ApiResponse>
+    IRequestHandler<DeleteExpenceNotifyCommand,ApiResponse>,
+    IRequestHandler<UpdateMyExpenceNotifyCommand, ApiResponse>,
+    IRequestHandler<DeleteMyExpenceNotifyCommand, ApiResponse>
 
 {
     private readonly VbDbContext dbContext;
@@ -42,7 +44,9 @@ public class ExpenceNotifyCommandHandler :
         }
 
         var entity = mapper.Map<CreateExpenceNotifyRequest, ExpenceNotify>(request.Model);
-        
+        entity.InsertUserId = request.CurrentUserId;
+        entity.InsertDate = DateTime.Now;
+
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -72,6 +76,8 @@ public class ExpenceNotifyCommandHandler :
         fromdb.Explanation = request.Model.Explanation;
         fromdb.Amount = request.Model.Amount;
         fromdb.TransferType = request.Model.TransferType;
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
@@ -81,6 +87,54 @@ public class ExpenceNotifyCommandHandler :
     public async Task<ApiResponse> Handle(DeleteExpenceNotifyCommand request, CancellationToken cancellationToken)
     {
         var fromdb = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
+        if (fromdb == null)
+        {
+            return new ApiResponse("Record not found");
+        }
+
+        // soft delete iþlemi yapýlýr
+        fromdb.IsActive = false;
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return new ApiResponse();
+    }
+
+    // Employee
+
+    // ExpenceNotify sýnýfýnýn database de güncellenmesi için kullanýlan command
+    public async Task<ApiResponse> Handle(UpdateMyExpenceNotifyCommand request, CancellationToken cancellationToken)
+    {
+        var fromdb = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == request.Id && x.UserId == request.CurrentUserId)
+            .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
+        if (fromdb == null)
+        {
+            return new ApiResponse("Record not found");
+        }
+
+        var check = await dbContext.Set<ExpenceType>().Where(x => x.Id == request.Model.ExpenceTypeId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check == null)
+        {
+            return new ApiResponse("ExpenceType not found");
+        }
+
+        fromdb.ExpenceTypeId = request.Model.ExpenceTypeId;
+        fromdb.Explanation = request.Model.Explanation;
+        fromdb.Amount = request.Model.Amount;
+        fromdb.TransferType = request.Model.TransferType;
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return new ApiResponse();
+    }
+
+    // ExpenceNotify sýnýfýnýn database de softdelete ile silinmesini için kullanýlan command
+    public async Task<ApiResponse> Handle(DeleteMyExpenceNotifyCommand request, CancellationToken cancellationToken)
+    {
+        var fromdb = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == request.Id && x.UserId == request.CurrentUserId)
             .FirstOrDefaultAsync(cancellationToken);
         // deðerin kontrol edilmesi
         if (fromdb == null)

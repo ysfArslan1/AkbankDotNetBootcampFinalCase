@@ -16,6 +16,7 @@ namespace FinalCase.Data.Entity
         public int ExpenceNotifyId { get; set; }
         public virtual ExpenceNotify ExpenceNotify { get; set; }
         public bool isApproved { get; set; }
+        public bool IsDeposited { get; set; }
         public string Explanation { get; set; }
     }
     public class ExpenceRespondConfiguration : IEntityTypeConfiguration<ExpenceRespond>
@@ -27,6 +28,7 @@ namespace FinalCase.Data.Entity
             builder.Property(x => x.UpdateDate).IsRequired(false);
             builder.Property(x => x.UpdateUserId).IsRequired(false);
             builder.Property(x => x.IsActive).IsRequired(true).HasDefaultValue(true);
+            builder.Property(x => x.IsDeposited).IsRequired(true).HasDefaultValue(false);
 
             builder.Property(x => x.UserId).IsRequired(true);
             builder.Property(x => x.ExpenceNotifyId).IsRequired(true);

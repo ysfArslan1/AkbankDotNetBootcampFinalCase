@@ -49,7 +49,9 @@ public class ExpenceRespondCommandHandler :
         }
 
         var entity = mapper.Map<CreateExpenceRespondRequest, ExpenceRespond>(request.Model);
-        
+        entity.InsertUserId = request.CurrentUserId;
+        entity.InsertDate = DateTime.Now;
+
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -70,7 +72,10 @@ public class ExpenceRespondCommandHandler :
         
         fromdb.Explanation = request.Model.Explanation;
         fromdb.isApproved = request.Model.isApproved;
-        
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.IsDeposited = request.Model.IsDeposited;
+        fromdb.UpdateDate = DateTime.Now;
+
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
     }

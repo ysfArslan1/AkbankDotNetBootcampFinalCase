@@ -35,7 +35,9 @@ public class RoleCommandHandler :
         }
 
         var entity = mapper.Map<CreateRoleRequest, Role>(request.Model);
-        
+        entity.InsertUserId = request.CurrentUserId;
+        entity.InsertDate = DateTime.Now;
+
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -62,7 +64,9 @@ public class RoleCommandHandler :
         }
 
         fromdb.Name = request.Model.Name;
-        
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
+
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
     }

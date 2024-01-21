@@ -17,7 +17,7 @@ namespace FinalCase.Business.Validator
             RuleFor(x => x.UserId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.ExpenceTypeId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.Amount).NotNull().NotEmpty().GreaterThan(0);
-            RuleFor(x => x.Explanation).NotNull().NotEmpty().MaximumLength(250);
+            RuleFor(x => x.Explanation).NotNull().NotEmpty().MaximumLength(200);
             RuleFor(x => x.TransferType).NotNull().NotEmpty().MaximumLength(100);
         }
     }
@@ -29,7 +29,7 @@ namespace FinalCase.Business.Validator
         {
             RuleFor(x => x.ExpenceTypeId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.Amount).NotNull().NotEmpty().GreaterThan(0);
-            RuleFor(x => x.Explanation).NotNull().NotEmpty().MaximumLength(250);
+            RuleFor(x => x.Explanation).NotNull().NotEmpty().MaximumLength(200);
             RuleFor(x => x.TransferType).NotNull().NotEmpty().MaximumLength(100);
         }
     }

@@ -15,7 +15,7 @@ namespace FinalCase.Business.Validator
         public CreateDocumentRequestValidator()
         {
             RuleFor(x => x.ExpenceNotifyId).NotNull().NotEmpty().GreaterThan(0);
-            RuleFor(x => x.Description).NotNull().NotEmpty().MaximumLength(250);
+            RuleFor(x => x.Description).NotNull().NotEmpty().MaximumLength(200);
             RuleFor(x => x.Content).NotNull();
         }
     }
@@ -24,7 +24,7 @@ namespace FinalCase.Business.Validator
     {
         public UpdateDocumentRequestValidator()
         {
-            RuleFor(x => x.Description).NotNull().NotEmpty().MaximumLength(250);
+            RuleFor(x => x.Description).NotNull().NotEmpty().MaximumLength(200);
             RuleFor(x => x.Content).NotNull();
         }
     }

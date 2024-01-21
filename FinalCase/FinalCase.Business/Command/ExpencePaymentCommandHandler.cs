@@ -34,23 +34,65 @@ public class ExpencePaymentCommandHandler :
             return new ApiResponse<ExpencePaymentResponse>($"{request.Model.ExpenceRespondId} is used by another ExpencePayment.");
         }
 
-        var checkRespond = await dbContext.Set<ExpenceRespond>().Where(x => x.Id == request.Model.ExpenceRespondId)
+        var Respond = await dbContext.Set<ExpenceRespond>().Where(x => x.Id == request.Model.ExpenceRespondId && x.isApproved==true)
             .FirstOrDefaultAsync(cancellationToken);
-        if (checkRespond == null)
+        if (Respond == null)
         {
-            return new ApiResponse<ExpencePaymentResponse>("ExpenceRespond not found");
+            return new ApiResponse<ExpencePaymentResponse>("ExpenceRespond not Aproved");
         }
 
-        var checkAccount = await dbContext.Set<Account>().Where(x => x.Id == request.Model.AccountId)
+        var Account = await dbContext.Set<Account>().Where(x => x.Id == request.Model.AccountId)
             .FirstOrDefaultAsync(cancellationToken);
-        if (checkAccount == null)
+        if (Account == null)
         {
             return new ApiResponse<ExpencePaymentResponse>("Account not found");
         }
 
+        var ReceiverAccount = await dbContext.Set<Account>().Where(x => x.IBAN == request.Model.ReceiverIban)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (ReceiverAccount == null)
+        {
+            return new ApiResponse<ExpencePaymentResponse>("Receiver Account not found");
+        }
+
+        if (ReceiverAccount.CurrencyType != Account.CurrencyType)
+        {
+            return new ApiResponse<ExpencePaymentResponse>($"{Account.Name} Account Currency Type, {request.Model.ReceiverIban}' Account  Currency Type not same");
+        }
+
+        var expenceNotify = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == Respond.ExpenceNotifyId)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (expenceNotify == null)
+        {
+            return new ApiResponse<ExpencePaymentResponse>("Expence Notify not found");
+        }
+
+        if (Account.Balance < expenceNotify.Amount)
+        {
+            return new ApiResponse<ExpencePaymentResponse>("Account Balance not enough");
+        }
+
+        Account.Balance = Account.Balance - expenceNotify.Amount;
+        Account.UpdateUserId = request.CurrentUserId;
+        Account.UpdateDate = DateTime.Now;
+
+        ReceiverAccount.Balance = ReceiverAccount.Balance + expenceNotify.Amount;
+        ReceiverAccount.UpdateUserId = request.CurrentUserId;
+        ReceiverAccount.UpdateDate = DateTime.Now;
+
+        Respond.IsDeposited= true;
+        Respond.UpdateUserId = request.CurrentUserId;
+        Respond.UpdateDate = DateTime.Now;
+
+        dbContext.Accounts.Update(Account);
+        dbContext.Accounts.Update(ReceiverAccount);
+        dbContext.ExpenceResponds.Update(Respond);
 
         var entity = mapper.Map<CreateExpencePaymentRequest, ExpencePayment>(request.Model);
-        
+        entity.Description = $"{expenceNotify.Amount} {Account.CurrencyType} was sent from account {Account.Name} to {ReceiverAccount.Name}";
+        entity.InsertUserId = request.CurrentUserId;
+        entity.InsertDate = DateTime.Now;
+
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -71,7 +113,8 @@ public class ExpencePaymentCommandHandler :
         
         fromdb.Description = request.Model.Description;
         fromdb.TransactionDate = request.Model.TransactionDate;
-        fromdb.IsDeposited = request.Model.IsDeposited;
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();

@@ -17,6 +17,7 @@ namespace FinalCase.Business.Validator
             RuleFor(x => x.UserId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.ExpenceNotifyId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.isApproved).NotNull();
+            RuleFor(x => x.IsDeposited).NotNull();
             RuleFor(x => x.Explanation).NotNull().NotEmpty().MaximumLength(100);
         }
     }
@@ -26,6 +27,7 @@ namespace FinalCase.Business.Validator
         public UpdateExpenceRespondRequestValidator()
         {
             RuleFor(x => x.isApproved).NotNull();
+            RuleFor(x => x.IsDeposited).NotNull();
             RuleFor(x => x.Explanation).NotNull().NotEmpty().MaximumLength(100);
         }
     }

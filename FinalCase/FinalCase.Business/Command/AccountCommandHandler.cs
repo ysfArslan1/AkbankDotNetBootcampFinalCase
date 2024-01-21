@@ -12,7 +12,9 @@ namespace FinalCase.Business.Command;
 public class AccountCommandHandler :
     IRequestHandler<CreateAccountCommand, ApiResponse<AccountResponse>>,
     IRequestHandler<UpdateAccountCommand,ApiResponse>,
-    IRequestHandler<DeleteAccountCommand,ApiResponse>
+    IRequestHandler<DeleteAccountCommand,ApiResponse>,
+    IRequestHandler<UpdateMyAccountCommand, ApiResponse>,
+    IRequestHandler<DeleteMyAccountCommand, ApiResponse>
 
 {
     private readonly VbDbContext dbContext;
@@ -45,6 +47,8 @@ public class AccountCommandHandler :
         // Iban ve Account numarasý oluþtur
         entity.AccountNumber =await generateAccountNumber();
         entity.IBAN =await generateIBAN();
+        entity.InsertUserId = request.CurrentUserId;
+        entity.InsertDate = DateTime.Now;
 
         var entityResult = await dbContext.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -73,6 +77,8 @@ public class AccountCommandHandler :
 
         fromdb.Name = request.Model.Name;
         fromdb.Balance = request.Model.Balance;
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
         
         await dbContext.SaveChangesAsync(cancellationToken);
         return new ApiResponse();
@@ -118,5 +124,53 @@ public class AccountCommandHandler :
             checkIBAN = await dbContext.Accounts.Where(x => x.IBAN == IBAN).FirstOrDefaultAsync();
         }
         return IBAN;
+    }
+
+
+    // Employee
+
+
+    // Account sýnýfýnýn database de güncellenmesi için kullanýlan command
+    public async Task<ApiResponse> Handle(UpdateMyAccountCommand request, CancellationToken cancellationToken)
+    {
+        var fromdb = await dbContext.Set<Account>().Where(x => x.Id == request.Id && x.UserId == request.CurrentUserId)
+            .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
+        if (fromdb == null)
+        {
+            return new ApiResponse("Record not found");
+        }
+        // Kullanýcýnýn ayný isimde baþka hesabý olup olmadýðý kontrol edilir.
+        var check = await dbContext.Set<Account>().Where(x => x.UserId == fromdb.UserId && x.Name == request.Model.Name)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (check != null)
+        {
+            return new ApiResponse($"{request.Model.Name} is used by another Account.");
+        }
+
+        fromdb.Name = request.Model.Name;
+        fromdb.Balance = request.Model.Balance;
+        fromdb.UpdateUserId = request.CurrentUserId;
+        fromdb.UpdateDate = DateTime.Now;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return new ApiResponse();
+    }
+
+    // Account sýnýfýnýn database de softdelete ile silinmesini için kullanýlan command
+    public async Task<ApiResponse> Handle(DeleteMyAccountCommand request, CancellationToken cancellationToken)
+    {
+        var fromdb = await dbContext.Set<Account>().Where(x => x.Id == request.Id && x.UserId == request.CurrentUserId)
+            .FirstOrDefaultAsync(cancellationToken);
+        // deðerin kontrol edilmesi
+        if (fromdb == null)
+        {
+            return new ApiResponse("Record not found");
+        }
+
+        // soft delete iþlemi yapýlýr
+        fromdb.IsActive = false;
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return new ApiResponse();
     }
 }
