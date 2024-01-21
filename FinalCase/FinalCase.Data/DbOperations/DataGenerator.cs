@@ -93,6 +93,8 @@ namespace FinalCase.Data.DbOperations
                     {
                         UserId=2,
                         Explanation="Initial Expence",
+                        Location="Istanbul",
+                        PaymentMethod="Credit Cart",
                         Amount=100,
                         TransferType="TL",
                         ExpenceType=new ExpenceType
