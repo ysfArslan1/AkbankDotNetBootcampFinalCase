@@ -5,6 +5,7 @@ using Serilog;
 using System;
 using System.Diagnostics;
 using System.Net;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace FinalCase.Middlewares
 {
@@ -45,6 +46,8 @@ namespace FinalCase.Middlewares
                     $"Exception={validationEx.Message}"
                 );
 
+                await HandleValidationException(context, validationEx);
+
             }
             catch (Exception ex)
             {
@@ -54,11 +57,44 @@ namespace FinalCase.Middlewares
                 Log.Fatal(
                     $"Path={context.Request.Path} || " +
                     $"Method={context.Request.Method} || " +
-                    $"Exception={ex.Message}"
+                $"Exception={ex.Message}"
                 );
+
+                await HandleException(context, ex);
 
             }
 
+        }
+
+        private Task HandleValidationException(HttpContext context, ValidationException validationEx)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            
+            // Validasyon hataları geri dönülür
+            var validationErrors = validationEx.Errors.Select(error =>
+            {
+                return new
+                {
+                    propertyName = error.PropertyName,
+                    errorMessage = error.ErrorMessage
+                };
+            });
+
+            var result = JsonConvert.SerializeObject(new { validationErrors }, Formatting.None);
+            return context.Response.WriteAsync(result);
+        }
+
+        private Task HandleException(HttpContext context, Exception ex)
+        {
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            //  hatalar geri dönülür
+            var result = JsonConvert.SerializeObject(new { error = ex.Message }, Formatting.None);
+            return context.Response.WriteAsync(result);
         }
 
     }
