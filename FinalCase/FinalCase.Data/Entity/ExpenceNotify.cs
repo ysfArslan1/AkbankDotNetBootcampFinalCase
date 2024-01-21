@@ -15,6 +15,8 @@ namespace FinalCase.Data.Entity
         public virtual User User { get; set; }
 
         public string Explanation { get; set; }
+        public string Location { get; set; }
+        public string PaymentMethod { get; set; }
         public decimal Amount{ get; set; }
         public string TransferType { get; set; }
 
@@ -34,6 +36,8 @@ namespace FinalCase.Data.Entity
 
             builder.Property(x => x.UserId).IsRequired(true);
             builder.Property(x => x.Explanation).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.Location).IsRequired(true).HasMaxLength(200);
+            builder.Property(x => x.PaymentMethod).IsRequired(true).HasMaxLength(200);
             builder.Property(x => x.Amount).IsRequired(true);
             builder.Property(x => x.TransferType).IsRequired(true).HasMaxLength(3);
             builder.Property(x => x.ExpenceTypeId).IsRequired(true);

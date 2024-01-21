@@ -41,6 +41,16 @@ public class ExpenceNotifyController : ControllerBase
         return result;
     }
 
+    // Database bulunan ExpenceNotify verilerinin çekilmasi için kullanýlýr.
+    [HttpGet("FromExpenceType/{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ApiResponse<List<ExpenceNotifyResponse>>> GetFromExpenceType(int id)
+    {
+        var operation = new GetAllExpenceNotifyFromExpenceTypeQuery(id);
+        var result = await mediator.Send(operation);
+        return result;
+    }
+
     // Database de ExpenceNotify verisi oluþturmak için kullanýlýr.
     [HttpPost]
     [Authorize(Roles = "Admin,Employee")]

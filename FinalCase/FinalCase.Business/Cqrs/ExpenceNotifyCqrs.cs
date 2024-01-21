@@ -10,6 +10,7 @@ public record UpdateExpenceNotifyCommand(int Id, int CurrentUserId, UpdateExpenc
 public record DeleteExpenceNotifyCommand(int Id) : IRequest<ApiResponse>;
 
 public record GetAllExpenceNotifyQuery() : IRequest<ApiResponse<List<ExpenceNotifyResponse>>>;
+public record GetAllExpenceNotifyFromExpenceTypeQuery(int ExpenceTypeId) : IRequest<ApiResponse<List<ExpenceNotifyResponse>>>;
 public record GetExpenceNotifyByIdQuery(int Id) : IRequest<ApiResponse<ExpenceNotifyResponse>>;
 
 // Employee

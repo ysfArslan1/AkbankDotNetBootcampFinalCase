@@ -12,6 +12,7 @@ namespace FinalCase.Business.Query;
 
 public class ExpenceNotifyQueryHandler :
     IRequestHandler<GetAllExpenceNotifyQuery, ApiResponse<List<ExpenceNotifyResponse>>>,
+    IRequestHandler<GetAllExpenceNotifyFromExpenceTypeQuery, ApiResponse<List<ExpenceNotifyResponse>>>,
     IRequestHandler<GetExpenceNotifyByIdQuery, ApiResponse<ExpenceNotifyResponse>>,
     IRequestHandler<GetAllMyExpenceNotifyQuery, ApiResponse<List<ExpenceNotifyResponse>>>,
     IRequestHandler<GetMyExpenceNotifyByIdQuery, ApiResponse<ExpenceNotifyResponse>>
@@ -41,6 +42,23 @@ public class ExpenceNotifyQueryHandler :
 
         var mappedList = mapper.Map<List<ExpenceNotify>, List<ExpenceNotifyResponse>>(list);
          return new ApiResponse<List<ExpenceNotifyResponse>>(mappedList);
+    }
+
+    public async Task<ApiResponse<List<ExpenceNotifyResponse>>> Handle(GetAllExpenceNotifyFromExpenceTypeQuery request,
+        CancellationToken cancellationToken)
+    {
+        var list = await dbContext.Set<ExpenceNotify>().Where(x => x.IsActive == true && x.ExpenceTypeId == request.ExpenceTypeId)
+            .Include(x => x.ExpenceType)
+            .Include(x => x.User).ToListAsync(cancellationToken);
+
+        // deðerin kontrol edilmesi
+        if (list == null)
+        {
+            return new ApiResponse<List<ExpenceNotifyResponse>>("Record not found");
+        }
+
+        var mappedList = mapper.Map<List<ExpenceNotify>, List<ExpenceNotifyResponse>>(list);
+        return new ApiResponse<List<ExpenceNotifyResponse>>(mappedList);
     }
 
     // Ýd deðeri ile istenilen ExpenceNotify deðerlerinin alýndýðý query
