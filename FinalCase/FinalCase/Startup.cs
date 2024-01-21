@@ -7,10 +7,13 @@ using FinalCase.Data.DbOperations;
 using FinalCase.Middlewares;
 using FinalCase.Services;
 using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System.Reflection;
 using System.Text;
 
@@ -73,6 +76,20 @@ namespace FinalCase
             });
             });
 
+
+            services.AddResponseCaching();
+            services.AddMemoryCache();
+
+            // redis
+            var redisConfig = new ConfigurationOptions();
+            redisConfig.EndPoints.Add(Configuration["Redis:Host"], Convert.ToInt32(Configuration["Redis:Port"]));
+            redisConfig.DefaultDatabase = 0;
+            services.AddStackExchangeRedisCache(opt =>
+            {
+                opt.ConfigurationOptions = redisConfig;
+                opt.InstanceName = Configuration["Redis:InstanceName"];
+            });
+
             // JwtToken configurasyonları yapıldı
             JwtConfig jwtConfig = Configuration.GetSection("JwtConfig").Get<JwtConfig>();
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
@@ -97,7 +114,19 @@ namespace FinalCase
                 };
             });
 
-        }
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireSqlConnection"), new SqlServerStorageOptions
+                {
+                    TransactionTimeout = TimeSpan.FromMinutes(5),
+                    InvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.FromMinutes(5),
+                }));
+            services.AddHangfireServer();
+
+            }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -114,9 +143,12 @@ namespace FinalCase
             app.UseRouting();
             app.UseAuthorization();
 
-
             //middlewaare
             app.UseCustomExceptionMiddleware();
+
+            app.UseResponseCaching();
+
+            app.UseHangfireDashboard();
 
             app.UseEndpoints(x => { x.MapControllers(); });
         }

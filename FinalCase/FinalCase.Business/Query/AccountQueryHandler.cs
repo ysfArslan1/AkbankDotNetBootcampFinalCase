@@ -11,8 +11,9 @@ using FinalCase.Data.DbOperations;
 namespace FinalCase.Business.Query;
 
 public class AccountQueryHandler :
-    IRequestHandler<GetAllAccountQuery, ApiResponse<List<AccountResponse>>>,
+    IRequestHandler<GetAllAccountQuery, ApiResponse<List<AccountResponse>>>, 
     IRequestHandler<GetAccountByIdQuery, ApiResponse<AccountResponse>>,
+    IRequestHandler<GetAccountByAccountNumberQuery, ApiResponse<AccountResponse>>,
     IRequestHandler<GetAllMyAccountQuery, ApiResponse<List<AccountResponse>>>,
     IRequestHandler<GetMyAccountByIdQuery, ApiResponse<AccountResponse>>
 {
@@ -56,6 +57,23 @@ public class AccountQueryHandler :
             return new ApiResponse<AccountResponse>("Record not found");
         }
         
+        var mapped = mapper.Map<Account, AccountResponse>(entity);
+        return new ApiResponse<AccountResponse>(mapped);
+    }
+
+    public async Task<ApiResponse<AccountResponse>> Handle(GetAccountByAccountNumberQuery request,
+        CancellationToken cancellationToken)
+    {
+        var entity = await dbContext.Set<Account>()
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.AccountNumber == request.AccountNumber && x.IsActive == true, cancellationToken);
+
+        // deðerin kontrol edilmesi
+        if (entity == null)
+        {
+            return new ApiResponse<AccountResponse>("Record not found");
+        }
+
         var mapped = mapper.Map<Account, AccountResponse>(entity);
         return new ApiResponse<AccountResponse>(mapped);
     }
