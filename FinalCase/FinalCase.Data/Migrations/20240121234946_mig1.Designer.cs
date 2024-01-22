@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinalCase.Data.Migrations
 {
     [DbContext(typeof(VbDbContext))]
-    [Migration("20240121223657_mig1")]
+    [Migration("20240121234946_mig1")]
     partial class mig1
     {
         /// <inheritdoc />
@@ -265,10 +265,9 @@ namespace FinalCase.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("ReceiverIban")
+                    b.Property<string>("ReceiverId")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReceiverName")
                         .IsRequired()

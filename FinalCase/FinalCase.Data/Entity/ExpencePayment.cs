@@ -16,7 +16,7 @@ namespace FinalCase.Data.Entity
         public int AccountId { get; set; }
         public virtual Account Account { get; set; }
 
-        public string ReceiverIban { get; set; }
+        public string ReceiverId { get; set; }
         public string ReceiverName { get; set; }
 
         public string Description{ get; set; }
@@ -35,7 +35,7 @@ namespace FinalCase.Data.Entity
 
             builder.Property(x => x.ExpenceRespondId).IsRequired(true);
             builder.Property(x => x.AccountId).IsRequired(true);
-            builder.Property(x => x.ReceiverIban).IsRequired(true).HasMaxLength(100);
+            builder.Property(x => x.ReceiverId).IsRequired(true);
             builder.Property(x => x.ReceiverName).IsRequired(true).HasMaxLength(200);
             builder.Property(x => x.Description).IsRequired(true).HasMaxLength(200);
             builder.Property(x => x.TransactionDate).IsRequired(true);

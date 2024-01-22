@@ -262,10 +262,9 @@ namespace FinalCase.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<string>("ReceiverIban")
+                    b.Property<string>("ReceiverId")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReceiverName")
                         .IsRequired()

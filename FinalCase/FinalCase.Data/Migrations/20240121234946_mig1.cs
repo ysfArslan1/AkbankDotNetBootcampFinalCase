@@ -230,7 +230,7 @@ namespace FinalCase.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ExpenceRespondId = table.Column<int>(type: "int", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false),
-                    ReceiverIban = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ReceiverId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReceiverName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     TransferType = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),

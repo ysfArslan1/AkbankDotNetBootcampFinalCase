@@ -17,7 +17,7 @@ namespace FinalCase.Business.Validator
             RuleFor(x => x.AccountId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.ExpenceRespondId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.TransactionDate).NotNull().NotEmpty().LessThan(DateTime.Now);
-            RuleFor(x => x.ReceiverIban).NotNull().NotEmpty().MaximumLength(100);
+            RuleFor(x => x.ReceiverId).NotNull().NotEmpty().GreaterThan(0);
             RuleFor(x => x.ReceiverName).NotNull().NotEmpty().MaximumLength(200);
         }
     }

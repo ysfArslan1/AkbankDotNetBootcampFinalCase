@@ -48,7 +48,7 @@ public class ExpencePaymentCommandHandler :
             return new ApiResponse<ExpencePaymentResponse>("Account not found");
         }
 
-        var ReceiverAccount = await dbContext.Set<Account>().Where(x => x.IBAN == request.Model.ReceiverIban)
+        var ReceiverAccount = await dbContext.Set<Account>().Where(x => x.UserId == request.Model.ReceiverId)
             .FirstOrDefaultAsync(cancellationToken);
         if (ReceiverAccount == null)
         {
@@ -57,7 +57,7 @@ public class ExpencePaymentCommandHandler :
 
         if (ReceiverAccount.CurrencyType != Account.CurrencyType)
         {
-            return new ApiResponse<ExpencePaymentResponse>($"{Account.Name} Account Currency Type, {request.Model.ReceiverIban}' Account  Currency Type not same");
+            return new ApiResponse<ExpencePaymentResponse>($"{Account.Name} Account Currency Type, {ReceiverAccount.IBAN}' Account  Currency Type not same");
         }
 
         var expenceNotify = await dbContext.Set<ExpenceNotify>().Where(x => x.Id == Respond.ExpenceNotifyId)
