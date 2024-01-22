@@ -92,3 +92,4 @@ Hangfire ile arka planda çalışan fonksiyonlar eklenmiştir.
 ![image](images/7.jpg)
 ### Redis ile Cache İşlemi
 ![image](images/8.jpg)
+![image](images/redis.jpg)
