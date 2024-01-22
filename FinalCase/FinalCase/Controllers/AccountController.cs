@@ -52,7 +52,7 @@ public class AccountController : ControllerBase
 
     // Database bulunan Account verilerinin çekilmasi için kullanýlýr.
     [HttpGet("GetByAcoountNumber/{AccountNumber}")]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<ApiResponse<AccountResponse>> GetByAcoountNumber(int AccountNumber)
     {
         var cacheResult = await distributedCache.GetAsync(AccountNumber.ToString());
